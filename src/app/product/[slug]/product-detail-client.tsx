@@ -6,6 +6,8 @@ import { useRouter } from "next/navigation";
 import { MOCK_PRODUCTS, formatRupiah } from "@/data/mock-products";
 import { ProductVariant } from "@/types/store";
 import { useCartStore } from "@/stores/cart-store";
+import { useWishlistStore } from "@/stores/wishlist-store";
+import { useToastStore } from "@/stores/toast-store";
 import { ProductCard } from "@/components/product/product-card";
 import {
   Sparkles,
@@ -19,11 +21,23 @@ import {
   Truck,
   ArrowLeft,
   Share2,
+  Heart,
 } from "lucide-react";
 
 export default function ProductDetailClient({ slug }: { slug: string }) {
   const router = useRouter();
   const product = MOCK_PRODUCTS.find((p) => p.slug === slug);
+
+  const { addItem } = useCartStore();
+  const { toggleWishlist, isInWishlist } = useWishlistStore();
+  const { showToast } = useToastStore();
+
+  const [selectedImageIndex, setSelectedImageIndex] = useState(0);
+  const [selectedVariant, setSelectedVariant] = useState<ProductVariant>(
+    product ? product.variants[0] : ({} as ProductVariant)
+  );
+  const [quantity, setQuantity] = useState(1);
+  const [copiedLink, setCopiedLink] = useState(false);
 
   if (!product) {
     return (
@@ -40,12 +54,7 @@ export default function ProductDetailClient({ slug }: { slug: string }) {
     );
   }
 
-  const [selectedImageIndex, setSelectedImageIndex] = useState(0);
-  const [selectedVariant, setSelectedVariant] = useState<ProductVariant>(product.variants[0]);
-  const [quantity, setQuantity] = useState(1);
-  const [copiedLink, setCopiedLink] = useState(false);
-
-  const { addItem } = useCartStore();
+  const isFavorited = isInWishlist(product.id);
 
   const currentPrice = product.price + (selectedVariant.priceOffset || 0);
   const originalPrice = product.originalPrice
@@ -58,6 +67,7 @@ export default function ProductDetailClient({ slug }: { slug: string }) {
 
   const handleAddToCart = () => {
     addItem(product, selectedVariant, quantity);
+    showToast(`Ditambahkan ke keranjang: ${product.name} (${quantity}x)`);
   };
 
   const handleBuyNow = () => {
@@ -65,10 +75,20 @@ export default function ProductDetailClient({ slug }: { slug: string }) {
     router.push("/cart");
   };
 
+  const handleToggleFav = () => {
+    const added = toggleWishlist(product);
+    if (added) {
+      showToast(`Disimpan ke Wishlist: ${product.name}`);
+    } else {
+      showToast(`Dihapus dari Wishlist: ${product.name}`, "info");
+    }
+  };
+
   const handleShare = () => {
     if (typeof navigator !== "undefined") {
       navigator.clipboard.writeText(window.location.href);
       setCopiedLink(true);
+      showToast("Tautan produk berhasil disalin!");
       setTimeout(() => setCopiedLink(false), 2000);
     }
   };
@@ -78,7 +98,7 @@ export default function ProductDetailClient({ slug }: { slug: string }) {
   ).slice(0, 3);
 
   return (
-    <div className="mx-auto max-w-[1220px] px-3 py-4 sm:px-6 md:px-8 space-y-12">
+    <div className="mx-auto max-w-[1220px] px-3 py-4 sm:px-6 md:px-8 space-y-12 pb-24 md:pb-12">
       {/* Breadcrumb */}
       <div className="flex items-center gap-2 text-xs text-slate-400">
         <Link href="/" className="hover:text-white">Beranda</Link>
@@ -146,13 +166,27 @@ export default function ProductDetailClient({ slug }: { slug: string }) {
                 <span className="text-slate-400">({product.reviewsCount} Ulasan pembeli)</span>
               </div>
 
-              <button
-                onClick={handleShare}
-                className="flex items-center gap-1 text-xs text-slate-400 hover:text-white transition-colors"
-              >
-                <Share2 size={13} />
-                <span>{copiedLink ? "Disalin!" : "Bagikan"}</span>
-              </button>
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={handleToggleFav}
+                  className={`flex h-8 w-8 items-center justify-center rounded-full border transition-all ${
+                    isFavorited
+                      ? "border-[#ff6e6e] bg-[#ff6e6e] text-white"
+                      : "border-white/15 bg-white/5 text-slate-300 hover:text-white"
+                  }`}
+                  title={isFavorited ? "Hapus dari Wishlist" : "Simpan ke Wishlist"}
+                >
+                  <Heart size={14} className={isFavorited ? "fill-white" : ""} />
+                </button>
+
+                <button
+                  onClick={handleShare}
+                  className="flex items-center gap-1 text-xs text-slate-400 hover:text-white transition-colors"
+                >
+                  <Share2 size={13} />
+                  <span>{copiedLink ? "Disalin!" : "Bagikan"}</span>
+                </button>
+              </div>
             </div>
 
             <h1 className="mt-2 text-2xl font-black text-white sm:text-3xl tracking-tight">
@@ -276,7 +310,7 @@ export default function ProductDetailClient({ slug }: { slug: string }) {
             </div>
           )}
 
-          {/* Actions */}
+          {/* Actions on Desktop */}
           <div className="space-y-3 pt-2">
             <div className="flex items-center gap-4">
               <span className="text-xs font-bold uppercase tracking-wider text-slate-400">
@@ -331,6 +365,29 @@ export default function ProductDetailClient({ slug }: { slug: string }) {
           </div>
         </div>
       )}
+
+      {/* STICKY MOBILE ACTION BAR (from UX Improvement Plan) */}
+      <div className="fixed bottom-0 left-0 right-0 z-30 flex items-center justify-between border-t border-white/10 bg-[#12141f]/95 p-3.5 backdrop-blur-2xl md:hidden shadow-2xl">
+        <div>
+          <span className="text-[10px] text-slate-400 block">Total Harga:</span>
+          <span className="text-sm font-black text-white">{formatRupiah(currentPrice * quantity)}</span>
+        </div>
+
+        <div className="flex items-center gap-2">
+          <button
+            onClick={handleAddToCart}
+            className="flex items-center gap-1.5 rounded-full border border-[#a1f68b]/40 bg-[#a1f68b]/20 px-3.5 py-2.5 text-xs font-bold text-[#a1f68b]"
+          >
+            <ShoppingBag size={14} /> +Keranjang
+          </button>
+          <button
+            onClick={handleBuyNow}
+            className="rounded-full bg-white text-slate-950 px-5 py-2.5 text-xs font-bold shadow-md hover:bg-[#a1f68b]"
+          >
+            Beli Sekarang
+          </button>
+        </div>
+      </div>
     </div>
   );
 }

@@ -4,7 +4,9 @@ import Link from "next/link";
 import { Product } from "@/types/store";
 import { formatRupiah } from "@/data/mock-products";
 import { useCartStore } from "@/stores/cart-store";
-import { ShoppingBag, Star, Sparkles, Layers } from "lucide-react";
+import { useWishlistStore } from "@/stores/wishlist-store";
+import { useToastStore } from "@/stores/toast-store";
+import { ShoppingBag, Star, Sparkles, Layers, Heart } from "lucide-react";
 import React from "react";
 
 interface ProductCardProps {
@@ -13,12 +15,28 @@ interface ProductCardProps {
 
 export function ProductCard({ product }: ProductCardProps) {
   const { addItem } = useCartStore();
+  const { toggleWishlist, isInWishlist } = useWishlistStore();
+  const { showToast } = useToastStore();
+
+  const isFavorited = isInWishlist(product.id);
 
   const handleQuickAdd = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
     const defaultVariant = product.variants[0];
     addItem(product, defaultVariant, 1);
+    showToast(`Ditambahkan ke keranjang: ${product.name}`);
+  };
+
+  const handleToggleFav = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    const added = toggleWishlist(product);
+    if (added) {
+      showToast(`Disimpan ke Wishlist: ${product.name}`);
+    } else {
+      showToast(`Dihapus dari Wishlist: ${product.name}`, "info");
+    }
   };
 
   const discountPercent = product.originalPrice
@@ -40,8 +58,8 @@ export function ProductCard({ product }: ProductCardProps) {
             loading="lazy"
           />
 
-          {/* Top Badges */}
-          <div className="absolute top-2.5 left-2.5 flex flex-wrap gap-1.5">
+          {/* Top Left Badges */}
+          <div className="absolute top-2.5 left-2.5 flex flex-wrap gap-1.5 z-10">
             {product.type === "sticker" ? (
               <span className="flex items-center gap-1 rounded-full border border-[#6ee7b7]/30 bg-[#6ee7b7]/15 px-2.5 py-0.5 text-[10px] font-bold text-[#6ee7b7] backdrop-blur-md">
                 <Sparkles size={10} /> Stiker
@@ -59,9 +77,22 @@ export function ProductCard({ product }: ProductCardProps) {
             )}
           </div>
 
+          {/* Top Right: Wishlist Heart Button */}
+          <button
+            onClick={handleToggleFav}
+            className={`absolute top-2.5 right-2.5 z-10 flex h-7 w-7 items-center justify-center rounded-full border backdrop-blur-md transition-all ${
+              isFavorited
+                ? "border-[#ff6e6e] bg-[#ff6e6e] text-white shadow-md scale-105"
+                : "border-white/15 bg-black/40 text-slate-300 hover:text-white hover:bg-black/70"
+            }`}
+            title={isFavorited ? "Hapus dari Wishlist" : "Simpan ke Wishlist"}
+          >
+            <Heart size={13} className={isFavorited ? "fill-white" : ""} />
+          </button>
+
           {/* Discount Tag */}
           {discountPercent > 0 && (
-            <span className="absolute top-2.5 right-2.5 rounded-full bg-[#ff6e6e] px-2 py-0.5 text-[10px] font-extrabold text-slate-950 shadow-md">
+            <span className="absolute bottom-2.5 right-2.5 rounded-full bg-[#ff6e6e] px-2 py-0.5 text-[10px] font-extrabold text-slate-950 shadow-md">
               -{discountPercent}%
             </span>
           )}

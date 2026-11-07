@@ -4,9 +4,11 @@ import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { Suspense } from "react";
 import { CheckCircle2, Download, Package, ArrowRight, Sparkles } from "lucide-react";
+import { useToastStore } from "@/stores/toast-store";
 
 function SuccessContent() {
   const searchParams = useSearchParams();
+  const { showToast } = useToastStore();
   const orderId = searchParams.get("orderId") || "CRIS-849201";
   const email = searchParams.get("email") || "pembeli@example.com";
 
@@ -52,7 +54,7 @@ function SuccessContent() {
               Tautan unduhan source code ZIP siap digunakan. Kamu juga dapat mengaksesnya kapan saja di Digital Library.
             </p>
             <button
-              onClick={() => alert("Mengunduh bundle template Crisanthera...")}
+              onClick={() => showToast("Memulai unduhan bundle template Crisanthera (.ZIP)...")}
               className="inline-flex items-center gap-1.5 rounded-lg bg-primary px-3 py-1.5 text-xs font-bold text-white shadow-md hover:opacity-90 mt-1"
             >
               <Download size={13} /> Download Source Code (.ZIP)

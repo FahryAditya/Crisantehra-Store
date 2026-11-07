@@ -4,9 +4,13 @@ import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Sparkles, Lock, Mail, ArrowRight, Eye, EyeOff } from "lucide-react";
+import { useAuthStore } from "@/stores/auth-store";
+import { useToastStore } from "@/stores/toast-store";
 
 export default function LoginPage() {
   const router = useRouter();
+  const { login } = useAuthStore();
+  const { addToast } = useToastStore();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -18,9 +22,22 @@ export default function LoginPage() {
 
     setTimeout(() => {
       setIsLoading(false);
-      alert("Login berhasil! Mengarahkan ke halaman utama...");
-      router.push("/");
-    }, 800);
+      // Login into session store
+      login({
+        id: "usr_active_buyer_01",
+        email: email,
+        name: email.split("@")[0].toUpperCase(),
+        role: "CUSTOMER",
+      });
+
+      addToast({
+        title: "Login Berhasil",
+        message: "Selamat datang kembali! Data keranjang & wishlist disinkronkan ke perangkat ini.",
+        type: "success",
+      });
+
+      router.push("/dashboard");
+    }, 600);
   };
 
   return (

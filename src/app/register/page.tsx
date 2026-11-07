@@ -4,9 +4,13 @@ import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Sparkles, Lock, Mail, User, Phone, Eye, EyeOff } from "lucide-react";
+import { useAuthStore } from "@/stores/auth-store";
+import { useToastStore } from "@/stores/toast-store";
 
 export default function RegisterPage() {
   const router = useRouter();
+  const { login } = useAuthStore();
+  const { addToast } = useToastStore();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
@@ -34,9 +38,22 @@ export default function RegisterPage() {
 
     setTimeout(() => {
       setIsLoading(false);
-      alert("Pendaftaran berhasil! Selamat datang di Crisanthera-Store.");
+      login({
+        id: "usr_active_buyer_01",
+        email,
+        name,
+        phone,
+        role: "CUSTOMER",
+      });
+
+      addToast({
+        title: "Pendaftaran Berhasil",
+        message: "Akun Anda telah aktif dan siap disinkronkan ke semua perangkat.",
+        type: "success",
+      });
+
       router.push("/dashboard");
-    }, 800);
+    }, 600);
   };
 
   return (

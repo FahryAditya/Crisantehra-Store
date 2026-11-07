@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { formatRupiah } from "@/data/mock-products";
+import { useToastStore } from "@/stores/toast-store";
 import {
   Download,
   Package,
@@ -14,6 +15,7 @@ import {
 } from "lucide-react";
 
 export default function DashboardOverviewPage() {
+  const { showToast } = useToastStore();
   return (
     <div className="space-y-6">
       {/* 3 Metric Summary Cards */}
@@ -110,7 +112,7 @@ export default function DashboardOverviewPage() {
 
               <div className="flex items-center gap-2">
                 <button
-                  onClick={() => alert(`Mengunduh berkas ${item.name} (.ZIP) dari Cloudinary Storage...`)}
+                  onClick={() => showToast(`Mengunduh ${item.name} (${item.version}.zip) dari Cloudinary...`)}
                   className="flex items-center gap-1.5 rounded-lg bg-primary px-3.5 py-2 text-xs font-bold text-white shadow-md hover:opacity-90 active:scale-95 transition-all"
                 >
                   <Download size={13} /> Unduh ZIP
