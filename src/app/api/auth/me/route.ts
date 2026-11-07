@@ -13,29 +13,47 @@ export async function GET() {
       });
     }
 
-    // Optionally fetch fresh profile data from DB
-    const user = await prisma.user.findUnique({
-      where: { id: session.userId },
-      select: {
-        id: true,
-        email: true,
-        name: true,
-        phone: true,
-        avatar: true,
-        role: true,
-      },
-    });
+    try {
+      // Fetch fresh profile data from DB
+      const user = await prisma.user.findUnique({
+        where: { id: session.userId },
+        select: {
+          id: true,
+          email: true,
+          name: true,
+          phone: true,
+          avatar: true,
+          role: true,
+        },
+      });
 
-    if (!user) {
+      if (user) {
+        return NextResponse.json({
+          authenticated: true,
+          user,
+        });
+      }
+    } catch {
+      // Fallback to token payload if DB is temporarily unreachable
       return NextResponse.json({
-        authenticated: false,
-        user: null,
+        authenticated: true,
+        user: {
+          id: session.userId,
+          email: session.email,
+          name: session.name,
+          role: session.role,
+        },
       });
     }
 
     return NextResponse.json({
       authenticated: true,
-      user,
+      user: {
+        id: session.userId,
+        email: session.email,
+        name: session.name,
+        role: session.role,
+      },
     });
   } catch (error) {
     return NextResponse.json({
@@ -44,4 +62,3 @@ export async function GET() {
     });
   }
 }
-

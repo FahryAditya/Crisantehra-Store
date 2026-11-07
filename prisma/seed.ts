@@ -1,5 +1,5 @@
 import "dotenv/config";
-import * as argon2 from "argon2";
+import bcrypt from "bcryptjs";
 import { PrismaPg } from "@prisma/adapter-pg";
 import { PrismaClient } from "../generated/prisma/client";
 import { MOCK_PRODUCTS } from "../src/data/mock-products";
@@ -16,10 +16,8 @@ async function main() {
   await prisma.product.deleteMany();
   await prisma.user.deleteMany();
 
-  // 2. Create Super Admin User
-  const adminHashedPassword = await argon2.hash("AdminCrisanthera2026!", {
-    type: argon2.argon2id,
-  });
+  // 2. Create Super Admin User (Bcrypt hash)
+  const adminHashedPassword = await bcrypt.hash("AdminCrisanthera2026!", 10);
 
   const admin = await prisma.user.create({
     data: {
@@ -32,10 +30,8 @@ async function main() {
   });
   console.log(`✓ Super Admin dibuat: ${admin.email} (Role: ${admin.role})`);
 
-  // 3. Create Customer Demo User
-  const customerHashedPassword = await argon2.hash("AlyaCustomer2026!", {
-    type: argon2.argon2id,
-  });
+  // 3. Create Customer Demo User (Bcrypt hash)
+  const customerHashedPassword = await bcrypt.hash("AlyaCustomer2026!", 10);
 
   const customer = await prisma.user.create({
     data: {

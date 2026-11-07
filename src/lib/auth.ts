@@ -1,7 +1,6 @@
-import * as argon2 from "argon2";
+import bcrypt from "bcryptjs";
 import crypto from "crypto";
 import { cookies } from "next/headers";
-import { prisma } from "@/lib/prisma";
 
 const AUTH_SECRET = process.env.AUTH_SECRET || "crisanthera-secret-duality-token-key-2026-argon2";
 export const AUTH_COOKIE_NAME = "crisanthera_auth_token";
@@ -14,17 +13,28 @@ export interface SessionPayload {
   exp: number; // unix timestamp in seconds
 }
 
-// 1. Password Security with Argon2
+// 1. Password Security (Bcrypt pure-JS with graceful Argon2 fallback)
 export async function hashPassword(password: string): Promise<string> {
-  return argon2.hash(password, {
-    type: argon2.argon2id,
-  });
+  return bcrypt.hash(password, 10);
 }
 
 export async function verifyPassword(hash: string, plain: string): Promise<boolean> {
   try {
-    return await argon2.verify(hash, plain);
-  } catch {
+    // If the hash is an existing Argon2 hash from earlier seeding
+    if (hash && hash.startsWith("$argon2")) {
+      try {
+        const argon2 = await import("argon2");
+        const isValid = await argon2.verify(hash, plain);
+        if (isValid) return true;
+      } catch {
+        console.warn("Argon2 native binary not available on this serverless runtime, falling back to bcrypt check");
+      }
+    }
+
+    // Default universal verification with bcryptjs (pure JS, 100% serverless safe)
+    return await bcrypt.compare(plain, hash);
+  } catch (err) {
+    console.error("verifyPassword error:", err);
     return false;
   }
 }
@@ -111,4 +121,3 @@ export async function getSessionUser(): Promise<SessionPayload | null> {
     return null;
   }
 }
-

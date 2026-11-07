@@ -18,15 +18,28 @@ import {
   ArrowDownRight,
   Layers as LayersIcon,
 } from "lucide-react";
+import { useEffect } from "react";
 
 export default function Home() {
   const { theme } = useThemeStore();
+  const [products, setProducts] = useState<any[]>(MOCK_PRODUCTS);
   const [newsletterEmail, setNewsletterEmail] = useState("");
   const [subscribed, setSubscribed] = useState(false);
   const [isStackExpanded, setIsStackExpanded] = useState(false);
 
-  const featuredProducts = MOCK_PRODUCTS.filter((p) => p.featured);
-  const bestSellers = MOCK_PRODUCTS.filter((p) => p.isBestSeller);
+  useEffect(() => {
+    fetch("/api/products")
+      .then((r) => r.json())
+      .then((res) => {
+        if (res.success && Array.isArray(res.data) && res.data.length > 0) {
+          setProducts(res.data);
+        }
+      })
+      .catch(() => {});
+  }, []);
+
+  const featuredProducts = products.filter((p) => p.featured);
+  const bestSellers = products.filter((p) => p.isBestSeller);
 
   const handleSubscribe = (e: React.FormEvent) => {
     e.preventDefault();
