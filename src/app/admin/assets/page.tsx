@@ -8,22 +8,23 @@ export const metadata = {
 
 export default function AdminAssetsPage() {
   return (
-    <div className="mx-auto max-w-4xl px-4 py-12 sm:px-6 lg:px-8 space-y-8">
-      <div className="border-b border-border pb-6 space-y-2">
-        <div className="inline-flex items-center gap-1.5 rounded-full border border-primary/30 bg-primary/10 px-3 py-1 text-xs font-bold text-primary">
-          <Cloud size={14} /> Cloudinary Cloud Storage Terhubung
+    <div className="space-y-6">
+      <div className="border-b border-white/10 pb-6 space-y-2">
+        <div className="inline-flex items-center gap-1.5 rounded-full border border-[#a1f68b]/30 bg-[#a1f68b]/10 px-3 py-1 text-xs font-bold text-[#a1f68b]">
+          <Cloud size={14} /> Cloudinary CDN Terhubung
         </div>
-        <h1 className="text-3xl font-black tracking-tight text-foreground sm:text-4xl">
-          Penyimpanan Aset Produk & Template
+        <h1 className="text-2xl font-black tracking-tight text-white sm:text-3xl">
+          Penyimpanan Aset Produk & Berkas Template ZIP
         </h1>
-        <p className="text-xs sm:text-sm text-muted">
-          Unggah foto produk stiker atau berkas arsip template Next.js (.ZIP). File akan otomatis
-          disimpan di Cloudinary dengan CDN global berkecepatan tinggi.
+        <p className="text-xs sm:text-sm text-slate-400">
+          Unggah foto stiker vinyl anime atau berkas arsip template Next.js (.zip) berukuran hingga 100MB.
+          URL CDN dapat disalin langsung untuk dimasukkan ke katalog produk.
         </p>
       </div>
 
-      <AssetUploader />
+      <div className="bento-card p-6 sm:p-8">
+        <AssetUploader />
+      </div>
     </div>
   );
 }
-

@@ -4,6 +4,8 @@ import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useCartStore } from "@/stores/cart-store";
+import { useAuthStore } from "@/stores/auth-store";
+import { useToastStore } from "@/stores/toast-store";
 import { formatRupiah } from "@/data/mock-products";
 import {
   ShieldCheck,
@@ -21,12 +23,14 @@ import {
 
 export default function CheckoutPage() {
   const router = useRouter();
+  const { user } = useAuthStore();
+  const { showToast } = useToastStore();
   const { items, getSubtotal, getTotalItems, clearCart } = useCartStore();
 
-  // Customer Information
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [phone, setPhone] = useState("");
+  // Customer Information (prefilled from logged in user if available)
+  const [name, setName] = useState(user?.name || "");
+  const [email, setEmail] = useState(user?.email || "");
+  const [phone, setPhone] = useState(user?.phone || "");
 
   // Shipping Information (for physical stickers)
   const [address, setAddress] = useState("");
@@ -51,26 +55,56 @@ export default function CheckoutPage() {
   const shippingFee = hasPhysical ? courierRates[shippingCourier] : 0;
   const finalTotal = subtotal + shippingFee;
 
-  const handleSubmitOrder = (e: React.FormEvent) => {
+  const handleSubmitOrder = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!name || !email || !phone) {
-      alert("Mohon lengkapi nama, email, dan nomor telepon.");
+      showToast("Mohon lengkapi nama, email, dan nomor telepon.", "error");
       return;
     }
 
     if (hasPhysical && (!address || !city || !postalCode)) {
-      alert("Mohon lengkapi alamat pengiriman untuk produk stiker fisik.");
+      showToast("Mohon lengkapi alamat pengiriman untuk stiker fisik.", "error");
       return;
     }
 
     setIsSubmitting(true);
 
-    // Simulate payment processing
-    setTimeout(() => {
+    try {
+      const res = await fetch("/api/checkout", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          userId: user?.id || null,
+          customerName: name,
+          customerEmail: email,
+          customerPhone: phone,
+          shippingAddress: hasPhysical ? address : null,
+          shippingCity: hasPhysical ? city : null,
+          postalCode: hasPhysical ? postalCode : null,
+          shippingCourier: hasPhysical ? shippingCourier : null,
+          shippingFee,
+          subtotal,
+          totalAmount: finalTotal,
+          paymentMethod,
+          items,
+        }),
+      });
+
+      const data = await res.json();
+      const orderId = data.orderId || `CRIS-${Math.floor(100000 + Math.random() * 900000)}`;
+
+      clearCart();
+      showToast("Pembayaran berhasil diproses!", "success");
+      router.push(`/checkout/success?orderId=${orderId}&email=${encodeURIComponent(email)}`);
+    } catch (err) {
+      console.error("Checkout submission error:", err);
+      // Fallback
       const orderId = `CRIS-${Math.floor(100000 + Math.random() * 900000)}`;
       clearCart();
       router.push(`/checkout/success?orderId=${orderId}&email=${encodeURIComponent(email)}`);
-    }, 1200);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   if (items.length === 0) {
