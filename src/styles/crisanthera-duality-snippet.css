@@ -1,0 +1,116 @@
+/* CRISANTHERA DUALITY DESIGN SYSTEM (Raw Snippet Saved) */
+
+@keyframes softGlow {
+  0%, 100% { box-shadow: 0 0 15px var(--glow); }
+  50% { box-shadow: 0 0 35px var(--glow); }
+}
+
+.animate-fade-in { animation: fadeIn 0.6s ease both; }
+.animate-float { animation: float 4s ease-in-out infinite; }
+.animate-sparkle { animation: sparkle 2s ease-in-out infinite; }
+.animate-glow { animation: softGlow 3s ease-in-out infinite; }
+
+/* 22. LOADING & EMPTY STATES */
+.skeleton {
+  background: var(--surface-secondary);
+  border-radius: var(--radius-md);
+  animation: skeletonPulse 1.5s ease-in-out infinite;
+}
+
+@keyframes skeletonPulse {
+  0%, 100% { opacity: 0.6; }
+  50% { opacity: 1; }
+}
+
+.empty-state { padding: 70px 20px; text-align: center; }
+.empty-state h3 { margin-bottom: 10px; }
+.empty-state p { color: var(--muted); }
+
+/* 23. UTILITY CLASSES */
+.flex { display: flex; }
+.flex-center { display: flex; align-items: center; justify-content: center; }
+.flex-between { display: flex; align-items: center; justify-content: space-between; }
+.flex-column { display: flex; flex-direction: column; }
+.grid { display: grid; }
+
+.gap-1 { gap: 4px; }
+.gap-2 { gap: 8px; }
+.gap-3 { gap: 12px; }
+.gap-4 { gap: 16px; }
+.gap-5 { gap: 24px; }
+.gap-6 { gap: 32px; }
+
+.mt-1 { margin-top: 4px; }
+.mt-2 { margin-top: 8px; }
+.mt-3 { margin-top: 12px; }
+.mt-4 { margin-top: 16px; }
+.mt-5 { margin-top: 24px; }
+
+.hidden { display: none; }
+.relative { position: relative; }
+.overflow-hidden { overflow: hidden; }
+.w-full { width: 100%; }
+
+/* 24. RESPONSIVE DESIGN */
+@media (max-width: 1024px) {
+  .product-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .footer-grid { grid-template-columns: repeat(2, 1fr); }
+  .hero { min-height: 520px; }
+  .product-detail { gap: 30px; }
+}
+
+@media (max-width: 768px) {
+  .container { width: min(calc(100% - 32px), var(--container-width)); }
+  .section { padding-block: 60px; }
+  .navbar-inner { min-height: 65px; }
+  .navbar-links { display: none; }
+  .navbar-logo { font-size: 21px; }
+  .hero { min-height: auto; padding-block: 70px; }
+  .hero-content { max-width: 100%; }
+  .hero-description { font-size: 15px; }
+  .hero-actions { align-items: stretch; }
+  .category-grid { grid-template-columns: 1fr; }
+  .product-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+  .product-info { padding: 13px; }
+  .product-name { font-size: 14px; }
+  .product-detail { grid-template-columns: 1fr; gap: 25px; }
+  .newsletter { padding: 40px 20px; }
+  .newsletter-form { flex-direction: column; }
+  .footer-grid { grid-template-columns: repeat(2, 1fr); gap: 30px 20px; }
+  .theme-option { padding: 8px 11px; }
+}
+
+@media (max-width: 480px) {
+  h1 { font-size: 38px; }
+  .product-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+  .product-price { font-size: 15px; }
+  .footer-grid { grid-template-columns: 1fr; }
+  .theme-switcher { gap: 3px; }
+  .theme-option { padding: 7px 9px; font-size: 10px; }
+  .btn { padding: 11px 17px; }
+}
+
+/* 25. ACCESSIBILITY */
+:focus-visible {
+  outline: 3px solid var(--secondary);
+  outline-offset: 3px;
+}
+
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* END OF CRISANTHERA DUALITY DESIGN SYSTEM */
+
