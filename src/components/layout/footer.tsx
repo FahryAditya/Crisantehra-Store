@@ -108,6 +108,11 @@ export function Footer() {
                 </Link>
               </li>
               <li>
+                <Link href="/admin/assets" className="hover:text-primary transition-colors">
+                  Cloudinary Asset Manager
+                </Link>
+              </li>
+              <li>
                 <span className="text-muted-light">Panduan Lisensi Template</span>
               </li>
               <li>

@@ -7,10 +7,150 @@ datasource db {
   provider = "postgresql"
 }
 
-// Tambahkan model di sini, contoh:
-// model User {
-//   id        String   @id @default(cuid())
-//   email     String   @unique
-//   password  String
-//   createdAt DateTime @default(now())
-// }
+enum Role {
+  CUSTOMER
+  ADMIN
+}
+
+enum ProductType {
+  STICKER
+  TEMPLATE
+}
+
+enum PaymentStatus {
+  PENDING
+  PAID
+  FAILED
+  REFUNDED
+}
+
+enum OrderStatus {
+  PROCESSING
+  SHIPPED
+  DELIVERED
+  COMPLETED
+  CANCELLED
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  password  String
+  name      String?
+  phone     String?
+  avatar    String?
+  role      Role     @default(CUSTOMER)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  orders    Order[]
+  downloads DigitalDownload[]
+}
+
+model Product {
+  id            String      @id @default(cuid())
+  slug          String      @unique
+  name          String
+  type          ProductType @default(STICKER)
+  tagline       String
+  description   String
+  price         Int
+  originalPrice Int?
+  rating        Float       @default(5.0)
+  reviewsCount  Int         @default(0)
+  featured      Boolean     @default(false)
+  isNew         Boolean     @default(false)
+  isBestSeller  Boolean     @default(false)
+  stock         Int         @default(0)
+  images        String[]
+  tags          String[]
+  themeAura     String?     @default("nihilux")
+
+  // Sticker specifics
+  dimensions    String?
+  finish        String?
+  waterproof    Boolean     @default(true)
+
+  // Template specifics
+  framework     String?
+  version       String?
+  techStack     String[]
+  demoUrl       String?
+
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+
+  variants      ProductVariant[]
+  orderItems    OrderItem[]
+  downloads     DigitalDownload[]
+}
+
+model ProductVariant {
+  id          String   @id @default(cuid())
+  productId   String
+  name        String
+  priceOffset Int      @default(0)
+  sku         String?
+
+  product     Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+}
+
+model Order {
+  id              String        @id @default(cuid())
+  orderNumber     String        @unique
+  userId          String?
+  customerName    String
+  customerEmail   String
+  customerPhone   String
+
+  // Physical shipping
+  shippingAddress String?
+  shippingCity    String?
+  postalCode      String?
+  shippingCourier String?
+  shippingFee     Int           @default(0)
+
+  subtotal        Int
+  discount        Int           @default(0)
+  totalAmount     Int
+
+  paymentMethod   String?
+  paymentStatus   PaymentStatus @default(PENDING)
+  orderStatus     OrderStatus   @default(PROCESSING)
+
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  user            User?         @relation(fields: [userId], references: [id], onDelete: SetNull)
+  items           OrderItem[]
+  downloads       DigitalDownload[]
+}
+
+model OrderItem {
+  id          String   @id @default(cuid())
+  orderId     String
+  productId   String
+  productName String
+  variantName String
+  price       Int
+  quantity    Int      @default(1)
+
+  order       Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  product     Product  @relation(fields: [productId], references: [id], onDelete: Restrict)
+}
+
+model DigitalDownload {
+  id            String    @id @default(cuid())
+  orderId       String
+  productId     String
+  userId        String?
+  downloadToken String    @unique @default(cuid())
+  downloadCount Int       @default(0)
+  maxDownloads  Int       @default(10)
+  expiresAt     DateTime?
+  createdAt     DateTime  @default(now())
+
+  order         Order     @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  product       Product   @relation(fields: [productId], references: [id], onDelete: Restrict)
+  user          User?     @relation(fields: [userId], references: [id], onDelete: SetNull)
+}

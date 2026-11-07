@@ -272,12 +272,12 @@ export default function CartPage() {
             </form>
 
             {/* Checkout Action Button */}
-            <button
-              onClick={handleMockCheckout}
+            <Link
+              href="/checkout"
               className="flex w-full items-center justify-center gap-2 rounded-xl bg-primary py-3.5 text-xs font-bold text-white shadow-[0_0_20px_var(--primary-glow)] transition-all hover:opacity-90 active:scale-95"
             >
               Lanjut ke Pembayaran <ArrowRight size={16} />
-            </button>
+            </Link>
 
             {/* Security Assurance Badge */}
             <div className="flex items-center justify-center gap-2 text-[11px] text-muted pt-2 border-t border-border/60">
