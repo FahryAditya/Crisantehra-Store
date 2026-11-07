@@ -1,26 +1,29 @@
 "use client";
 
 import Link from "next/link";
-import { MOCK_PRODUCTS } from "@/data/mock-products";
+import { useState } from "react";
+import { MOCK_PRODUCTS, formatRupiah } from "@/data/mock-products";
 import { ProductCard } from "@/components/product/product-card";
 import { useThemeStore } from "@/stores/theme-store";
 import {
   Sparkles,
   Layers,
   ArrowRight,
+  TrendingUp,
+  Coins,
   ShieldCheck,
-  Zap,
   CheckCircle2,
   Mail,
-  Flame,
-  Moon,
+  ArrowUpRight,
+  ArrowDownRight,
+  Layers as LayersIcon,
 } from "lucide-react";
-import { useState } from "react";
 
 export default function Home() {
   const { theme } = useThemeStore();
   const [newsletterEmail, setNewsletterEmail] = useState("");
   const [subscribed, setSubscribed] = useState(false);
+  const [isStackExpanded, setIsStackExpanded] = useState(false);
 
   const featuredProducts = MOCK_PRODUCTS.filter((p) => p.featured);
   const bestSellers = MOCK_PRODUCTS.filter((p) => p.isBestSeller);
@@ -34,272 +37,261 @@ export default function Home() {
   };
 
   return (
-    <div className="space-y-16 pb-16">
-      {/* 1. HERO SECTION */}
-      <section className="relative overflow-hidden border-b border-border/60 bg-gradient-to-b from-surface/50 via-background to-background py-16 sm:py-24">
-        {/* Ambient Glow Ornaments */}
-        <div className="pointer-events-none absolute -top-40 left-1/2 -z-10 h-96 w-[600px] -translate-x-1/2 rounded-full bg-primary/20 blur-3xl" />
-
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 items-center gap-12 lg:grid-cols-12">
-            {/* Left Content */}
-            <div className="space-y-6 text-center lg:col-span-7 lg:text-left">
-              {/* Theme Vibe Pill */}
-              <div className="inline-flex items-center gap-2 rounded-full border border-border bg-surface px-3 py-1 text-xs font-semibold text-muted shadow-sm">
-                {theme === "nihilux" ? (
-                  <>
-                    <Moon size={14} className="text-primary animate-pulse" />
-                    <span>Mode Aktif: <strong className="text-foreground">Nihilux</strong> (Mystic Violet)</span>
-                  </>
-                ) : (
-                  <>
-                    <Flame size={14} className="text-primary animate-pulse" />
-                    <span>Mode Aktif: <strong className="text-foreground">Aha</strong> (Crimson Radiance)</span>
-                  </>
-                )}
-              </div>
-
-              <h1 className="text-4xl font-black tracking-tight sm:text-5xl lg:text-6xl text-foreground leading-[1.1]">
-                Dua Dimensi, Satu Estetika:{" "}
-                <span className="text-primary drop-shadow-[0_0_25px_var(--primary-glow)]">
-                  Anime Stickers
-                </span>{" "}
-                &{" "}
-                <span className="text-foreground">
-                  Next.js Templates
-                </span>
-              </h1>
-
-              <p className="max-w-2xl text-base text-muted sm:text-lg">
-                Koleksi stiker vinyl holographic tahan air dengan desain anime orisinal,
-                serta template website Next.js 16 berstandar produksi dengan sistem tema Duality.
-              </p>
-
-              {/* Action Buttons */}
-              <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-3 pt-2">
-                <Link
-                  href="/catalog?category=sticker"
-                  className="flex w-full sm:w-auto items-center justify-center gap-2 rounded-xl bg-primary px-6 py-3.5 text-sm font-bold text-white shadow-[0_0_20px_var(--primary-glow)] transition-all hover:opacity-90 active:scale-95"
-                >
-                  <Sparkles size={16} /> Beli Stiker Anime
-                </Link>
-
-                <Link
-                  href="/catalog?category=template"
-                  className="flex w-full sm:w-auto items-center justify-center gap-2 rounded-xl border border-border bg-surface px-6 py-3.5 text-sm font-bold text-foreground transition-all hover:bg-surface-secondary active:scale-95"
-                >
-                  <Layers size={16} /> Jelajahi Templates Next.js
-                </Link>
-              </div>
-
-              {/* Feature Points */}
-              <div className="grid grid-cols-3 gap-4 pt-4 border-t border-border/60 text-xs text-muted">
-                <div className="flex items-center gap-2">
-                  <CheckCircle2 size={16} className="text-primary shrink-0" />
-                  <span>Vinyl UV & Waterproof</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <CheckCircle2 size={16} className="text-primary shrink-0" />
-                  <span>Next.js 16 App Router</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <CheckCircle2 size={16} className="text-primary shrink-0" />
-                  <span>Dual Character Theme</span>
-                </div>
-              </div>
-            </div>
-
-            {/* Right Interactive Visual Showcase */}
-            <div className="lg:col-span-5 flex justify-center">
-              <div className="relative w-full max-w-sm rounded-2xl border border-border bg-surface p-6 shadow-2xl">
-                <div className="relative aspect-square overflow-hidden rounded-xl bg-surface-secondary border border-border">
-                  <img
-                    src={
-                      theme === "nihilux"
-                        ? "https://images.unsplash.com/photo-1579783900882-c0d3dad7b119?w=800&auto=format&fit=crop&q=80"
-                        : "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=800&auto=format&fit=crop&q=80"
-                    }
-                    alt="Character Theme Showcase"
-                    className="h-full w-full object-cover transition-all duration-700 hover:scale-105"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent flex flex-col justify-end p-4">
-                    <span className="text-[10px] font-bold uppercase tracking-wider text-primary">
-                      {theme === "nihilux" ? "Karakter Nihilux" : "Karakter Aha"}
-                    </span>
-                    <h3 className="text-lg font-bold text-white">
-                      {theme === "nihilux" ? "Mystic Chrysanthemum" : "Crimson Bloom Radiance"}
-                    </h3>
-                  </div>
-                </div>
-
-                <div className="mt-4 flex items-center justify-between text-xs text-muted">
-                  <span>Klik tombol tema di atas untuk mengubah nuansa toko</span>
-                  <Link href="/catalog" className="font-semibold text-primary flex items-center gap-1 hover:underline">
-                    Katalog <ArrowRight size={12} />
-                  </Link>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* 2. CATEGORY HIGHLIGHT CARDS */}
-      <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="mb-6 flex items-end justify-between">
+    <div className="mx-auto max-w-[1220px] px-3 py-4 sm:px-6 md:px-8 space-y-8">
+      {/* 1. TOP BENTO ROW: HERO BALANCE CARD + STATS MINI CARDS */}
+      <div className="grid grid-cols-1 gap-5 lg:grid-cols-12 items-stretch">
+        {/* Total Balance Hero Card (7 cols) from acuan.html */}
+        <div className="lg:col-span-7 hero-balance-card p-6 sm:p-8 text-slate-950 flex flex-col justify-between min-h-[260px] shadow-2xl">
           <div>
-            <h2 className="text-2xl font-extrabold tracking-tight text-foreground sm:text-3xl">
-              Pilih Kategori Belanja
-            </h2>
-            <p className="mt-1 text-sm text-muted">
-              Temukan produk fisik stiker koleksi atau aset digital template web.
+            <div className="flex items-center justify-between">
+              <span className="text-xs sm:text-sm font-semibold text-slate-900/80 uppercase tracking-wider">
+                Edisi Koleksi Crisanthera
+              </span>
+              <span className="text-xs font-bold bg-slate-950/10 px-3 py-1 rounded-full">
+                Mode: {theme === "nihilux" ? "Nihilux (Lilac)" : "Aha (Coral)"}
+              </span>
+            </div>
+
+            <div className="mt-4 flex items-baseline">
+              <span className="text-3xl sm:text-[42px] font-extrabold tracking-tight leading-none text-slate-950">
+                Anime & Next.js
+              </span>
+            </div>
+
+            <p className="mt-2 text-xs sm:text-sm font-semibold text-slate-900/80 flex items-center gap-1.5">
+              <TrendingUp size={16} />
+              <span>Stiker vinyl holographic waterproof + template web Next.js 16 produksi</span>
             </p>
           </div>
+
+          {/* Action Buttons: Transfer + Gooey Pill Button from acuan.html */}
+          <div className="mt-6 flex flex-wrap items-center gap-3 relative z-10">
+            <Link
+              href="/catalog?category=sticker"
+              className="bg-[#0b0c12] hover:bg-slate-900 text-white text-xs font-semibold px-6 py-3 rounded-full shadow-md hover:shadow-xl hover:-translate-y-0.5 active:translate-y-0 transition-all flex items-center gap-2"
+            >
+              <Sparkles size={14} className="text-[#a1f68b]" />
+              <span>Beli Stiker Anime</span>
+            </Link>
+
+            {/* Connected Gooey Pill Button */}
+            <Link
+              href="/catalog?category=template"
+              className="gooey-group group cursor-pointer"
+            >
+              <button
+                type="button"
+                className="bg-white group-hover:bg-slate-50 text-slate-950 text-xs font-semibold px-5 py-3 rounded-full transition-transform group-hover:-translate-y-0.5"
+              >
+                Unduh Templates
+              </button>
+              <div className="gooey-bridge" />
+              <button
+                type="button"
+                className="w-10 h-10 rounded-full bg-white group-hover:bg-slate-50 text-slate-950 flex items-center justify-center transition-transform group-hover:-translate-y-0.5 group-hover:rotate-12"
+              >
+                <Layers size={15} />
+              </button>
+            </Link>
+          </div>
         </div>
 
-        <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-          {/* Card 1: Anime Stickers */}
+        {/* Income & Expense Mini Cards (5 cols) from acuan.html */}
+        <div className="lg:col-span-5 flex flex-col gap-4 justify-between">
+          {/* Income Card style: Anime Stickers */}
           <Link
             href="/catalog?category=sticker"
-            className="group relative overflow-hidden rounded-2xl border border-border bg-surface p-8 transition-all hover:border-primary/60 hover:shadow-[0_4px_30px_var(--primary-glow)]"
+            className="bento-card income-card p-5 flex flex-col justify-between flex-1 group"
           >
-            <div className="relative z-10 max-w-sm space-y-3">
-              <div className="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-primary/20 text-primary border border-primary/30">
-                <Sparkles size={20} />
-              </div>
-              <h3 className="text-xl font-bold text-foreground group-hover:text-primary transition-colors">
+            <div className="flex items-center justify-between">
+              <span className="text-xs sm:text-sm font-medium text-slate-300">
                 Anime Vinyl Stickers
-              </h3>
-              <p className="text-xs text-muted leading-relaxed">
-                Stiker die-cut dan holographic vinyl dengan tinta pigmen Jepang tahan pudar.
-                Tahan goresan dan air untuk laptop, motor, dan tumbler.
-              </p>
-              <div className="flex items-center gap-1 text-xs font-bold text-primary pt-2">
-                Lihat Koleksi Stiker <ArrowRight size={14} className="transition-transform group-hover:translate-x-1" />
-              </div>
+              </span>
+              <ArrowUpRight className="text-[#a1f68b] transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" size={18} />
+            </div>
+            <div className="my-2 flex items-baseline">
+              <span className="text-2xl font-bold tracking-tight text-white">4 Varian Koleksi</span>
+            </div>
+            <div className="flex items-center justify-between mt-1">
+              <span className="text-[11px] text-slate-400">Holographic & Matte Vinyl</span>
+              <span className="bg-[#a1f68b] text-slate-950 text-[11px] font-bold px-2.5 py-0.5 rounded-full">
+                100% Waterproof
+              </span>
             </div>
           </Link>
 
-          {/* Card 2: Next.js Templates */}
+          {/* Expense Card style: Next.js Templates */}
           <Link
             href="/catalog?category=template"
-            className="group relative overflow-hidden rounded-2xl border border-border bg-surface p-8 transition-all hover:border-primary/60 hover:shadow-[0_4px_30px_var(--primary-glow)]"
+            className="bento-card expense-card p-5 flex flex-col justify-between flex-1 group"
           >
-            <div className="relative z-10 max-w-sm space-y-3">
-              <div className="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-primary/20 text-primary border border-primary/30">
-                <Layers size={20} />
-              </div>
-              <h3 className="text-xl font-bold text-foreground group-hover:text-primary transition-colors">
+            <div className="flex items-center justify-between">
+              <span className="text-xs sm:text-sm font-medium text-slate-300">
                 Next.js 16 Web Templates
-              </h3>
-              <p className="text-xs text-muted leading-relaxed">
-                Template kode sumber siap pakai dengan App Router, Tailwind CSS v4, Zustand,
-                dan Prisma 7. Langsung unduh setelah pembelian.
-              </p>
-              <div className="flex items-center gap-1 text-xs font-bold text-primary pt-2">
-                Lihat Koleksi Template <ArrowRight size={14} className="transition-transform group-hover:translate-x-1" />
+              </span>
+              <ArrowDownRight className="text-[#ff6e6e] transition-transform group-hover:translate-x-0.5 group-hover:translate-y-0.5" size={18} />
+            </div>
+            <div className="my-2 flex items-baseline">
+              <span className="text-2xl font-bold tracking-tight text-white">4 Source Code</span>
+            </div>
+            <div className="flex items-center justify-between mt-1">
+              <span className="text-[11px] text-slate-400">Turbopack, Tailwind v4 & Prisma</span>
+              <span className="bg-[#ff6e6e] text-slate-950 text-[11px] font-bold px-2.5 py-0.5 rounded-full">
+                Instant ZIP
+              </span>
+            </div>
+          </Link>
+        </div>
+      </div>
+
+      {/* 2. MIDDLE ROW: 3D STACKED SHOWCASE + FEATURE HIGHLIGHT */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
+        {/* Left: 3D Stacked Cards (5 cols) from acuan.html wallet-stack */}
+        <div className="lg:col-span-5 bento-card p-6 flex flex-col justify-between min-h-[340px]">
+          <div className="flex items-center justify-between mb-2">
+            <div>
+              <h2 className="text-base font-semibold text-white">Duality Stack Bundle</h2>
+              <p className="text-xs text-slate-400">Klik tumpukan kartu untuk membuka layer</p>
+            </div>
+            <span className="text-xs font-mono font-bold text-[#a1f68b] bg-white/[0.04] px-2.5 py-1 rounded-full border border-white/[0.06]">
+              3 In 1
+            </span>
+          </div>
+
+          {/* 3D Stacked Layers */}
+          <div
+            onClick={() => setIsStackExpanded(!isStackExpanded)}
+            className={`wallet-stack my-4 ${isStackExpanded ? "expanded" : ""}`}
+            title="Klik untuk membuka / menutup tumpukan kartu"
+          >
+            {/* Layer 1: Orange */}
+            <div className="credit-card card-layer-1 px-5 py-3 flex items-start justify-between text-slate-950">
+              <span className="text-xs font-bold">Stiker Holographic Nihilux</span>
+              <span className="text-[11px] font-mono font-bold">7.5 cm</span>
+            </div>
+
+            {/* Layer 2: Mint */}
+            <div className="credit-card card-layer-2 px-5 py-3 flex items-start justify-between text-slate-950">
+              <span className="text-xs font-extrabold italic">Die-Cut Spark Aha</span>
+              <span className="text-[11px] font-mono font-bold">8.0 cm</span>
+            </div>
+
+            {/* Layer 3: Purple */}
+            <div className="credit-card card-layer-3 px-6 py-4 flex items-start justify-between text-white">
+              <span className="text-sm font-extrabold italic tracking-wider">Next.js 16 Template</span>
+              <span className="text-xs font-mono font-semibold">v2.1.0</span>
+            </div>
+
+            {/* Layer 4: Front Glass Overlay */}
+            <div className="credit-card card-layer-4 px-6 py-4 flex flex-col justify-between">
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-semibold text-white/95">
+                  Crisanthera Duality Master Pack
+                </span>
+                <span className="text-[10px] font-bold text-[#a1f68b]">ALL ACCESS</span>
+              </div>
+              <div className="flex items-center justify-between text-xs text-slate-300 mt-2">
+                <span>Rp 349.000</span>
+                <span className="font-mono text-[11px] text-slate-400">Koleksi Terlengkap</span>
               </div>
             </div>
-          </Link>
-        </div>
-      </section>
-
-      {/* 3. FEATURED PRODUCTS GRID */}
-      <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="mb-6 flex items-center justify-between">
-          <div>
-            <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-primary">
-              <Zap size={14} /> Pilihan Editor
-            </div>
-            <h2 className="text-2xl font-extrabold tracking-tight text-foreground sm:text-3xl mt-1">
-              Produk Unggulan
-            </h2>
           </div>
 
-          <Link
-            href="/catalog"
-            className="flex items-center gap-1 text-xs font-bold text-primary hover:underline"
-          >
-            Lihat Semua <ArrowRight size={14} />
-          </Link>
+          <div className="pt-2 text-center">
+            <Link
+              href="/catalog"
+              className="text-xs font-bold text-[#a1f68b] hover:underline inline-flex items-center gap-1"
+            >
+              Lihat Rincian Bundle Produk <ArrowRight size={13} />
+            </Link>
+          </div>
         </div>
 
-        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
-          {featuredProducts.map((product) => (
-            <ProductCard key={product.id} product={product} />
-          ))}
-        </div>
-      </section>
-
-      {/* 4. BEST SELLERS */}
-      <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="mb-6 flex items-center justify-between">
-          <div>
-            <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-amber-400">
-              <Sparkles size={14} /> Paling Diminati
+        {/* Right: Featured Products Grid (7 cols) */}
+        <div className="lg:col-span-7 flex flex-col gap-4">
+          <div className="flex items-center justify-between">
+            <div>
+              <h2 className="text-xl font-bold tracking-tight text-white">
+                Produk Unggulan
+              </h2>
+              <p className="text-xs text-slate-400">Pilihan terpopuler bulan ini</p>
             </div>
-            <h2 className="text-2xl font-extrabold tracking-tight text-foreground sm:text-3xl mt-1">
-              Best Sellers
-            </h2>
+            <Link
+              href="/catalog"
+              className="text-xs font-bold text-[#a1f68b] hover:underline flex items-center gap-1"
+            >
+              Semua Katalog <ArrowRight size={13} />
+            </Link>
           </div>
 
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {featuredProducts.slice(0, 4).map((product) => (
+              <ProductCard key={product.id} product={product} />
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* 3. BEST SELLERS SECTION */}
+      <div className="space-y-4">
+        <div className="flex items-center justify-between">
+          <div>
+            <h2 className="text-xl font-bold tracking-tight text-white">Best Sellers</h2>
+            <p className="text-xs text-slate-400">Produk dengan ulasan tertinggi oleh pembeli</p>
+          </div>
           <Link
             href="/catalog"
-            className="flex items-center gap-1 text-xs font-bold text-primary hover:underline"
+            className="text-xs font-bold text-[#a1f68b] hover:underline flex items-center gap-1"
           >
-            Buka Katalog <ArrowRight size={14} />
+            Buka Katalog Lengkap <ArrowRight size={13} />
           </Link>
         </div>
 
-        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           {bestSellers.map((product) => (
             <ProductCard key={product.id} product={product} />
           ))}
         </div>
-      </section>
+      </div>
 
-      {/* 5. NEWSLETTER SECTION */}
-      <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="relative overflow-hidden rounded-2xl border border-border bg-gradient-to-r from-surface to-surface-secondary p-8 sm:p-12 text-center">
-          <div className="mx-auto max-w-xl space-y-4">
-            <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-primary text-white shadow-[0_0_20px_var(--primary-glow)]">
-              <Mail size={24} />
-            </div>
-
-            <h2 className="text-2xl font-black text-foreground sm:text-3xl">
-              Dapatkan Diskon 15% untuk Pembelian Pertama
-            </h2>
-
-            <p className="text-xs sm:text-sm text-muted">
-              Berlangganan newsletter Crisanthera untuk menerima kabar rilis stiker anime edisi terbatas
-              dan update rilis template Next.js terbaru langsung ke emailmu.
-            </p>
-
-            {subscribed ? (
-              <div className="rounded-xl border border-emerald-500/40 bg-emerald-500/10 p-4 text-xs font-bold text-emerald-400">
-                🎉 Terima kasih! Kode voucher diskon telah dikirim ke email kamu.
-              </div>
-            ) : (
-              <form onSubmit={handleSubscribe} className="flex flex-col sm:flex-row gap-2.5 max-w-md mx-auto pt-2">
-                <input
-                  type="email"
-                  required
-                  value={newsletterEmail}
-                  onChange={(e) => setNewsletterEmail(e.target.value)}
-                  placeholder="Masukkan alamat email kamu..."
-                  className="flex-1 rounded-xl border border-border bg-surface px-4 py-3 text-xs text-foreground placeholder:text-muted focus:border-primary focus:outline-none"
-                />
-                <button
-                  type="submit"
-                  className="rounded-xl bg-primary px-5 py-3 text-xs font-bold text-white shadow-md transition-all hover:opacity-90 active:scale-95"
-                >
-                  Berlangganan
-                </button>
-              </form>
-            )}
-          </div>
+      {/* 4. NEWSLETTER BENTO CARD */}
+      <div className="bento-card p-6 sm:p-8 text-center space-y-4">
+        <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-white/10 border border-white/15 text-[#a1f68b]">
+          <Mail size={22} />
         </div>
-      </section>
+
+        <div className="max-w-md mx-auto space-y-1">
+          <h3 className="text-xl font-extrabold text-white">
+            Dapatkan Diskon 15% untuk Pembelian Pertama
+          </h3>
+          <p className="text-xs text-slate-400">
+            Daftarkan emailmu untuk menerima voucher diskon dan info rilis stiker anime edisi terbatas.
+          </p>
+        </div>
+
+        {subscribed ? (
+          <div className="inline-block rounded-xl border border-emerald-500/40 bg-emerald-500/10 px-4 py-2.5 text-xs font-bold text-emerald-400">
+            🎉 Voucher diskon telah dikirimkan ke email kamu!
+          </div>
+        ) : (
+          <form onSubmit={handleSubscribe} className="flex flex-col sm:flex-row gap-2 max-w-sm mx-auto pt-2">
+            <input
+              type="email"
+              required
+              value={newsletterEmail}
+              onChange={(e) => setNewsletterEmail(e.target.value)}
+              placeholder="name@example.com"
+              className="flex-1 rounded-full border border-white/10 bg-[#0b0c12] px-4 py-2.5 text-xs text-white placeholder:text-slate-500 focus:outline-none focus:border-[#a1f68b]"
+            />
+            <button
+              type="submit"
+              className="rounded-full bg-[#a1f68b] px-5 py-2.5 text-xs font-bold text-slate-950 hover:bg-[#8ef075] transition-all active:scale-95 shadow-md"
+            >
+              Berlangganan
+            </button>
+          </form>
+        )}
+      </div>
     </div>
   );
 }

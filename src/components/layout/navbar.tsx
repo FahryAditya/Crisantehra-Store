@@ -1,134 +1,123 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { ThemeSwitcher } from "@/components/theme/theme-switcher";
 import { useCartStore } from "@/stores/cart-store";
-import { ShoppingBag, Menu, X, Sparkles, Layers } from "lucide-react";
+import { ShoppingBag, Search, Menu, X, Sparkles, Layers } from "lucide-react";
 
 export function Navbar() {
+  const pathname = usePathname();
   const { toggleDrawer, getTotalItems } = useCartStore();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const totalItems = getTotalItems();
 
+  const navLinks = [
+    { href: "/", label: "Beranda" },
+    { href: "/catalog", label: "Katalog" },
+    { href: "/catalog?category=sticker", label: "Stiker Anime" },
+    { href: "/catalog?category=template", label: "Templates" },
+  ];
+
   return (
-    <header className="sticky top-0 z-40 w-full border-b border-border/80 bg-surface/85 backdrop-blur-md">
-      <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
-        {/* Brand Logo */}
-        <div className="flex items-center gap-8">
-          <Link href="/" className="group flex items-center gap-2.5">
-            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary text-white shadow-[0_0_15px_var(--primary-glow)] transition-transform group-hover:scale-105">
-              <Sparkles size={18} />
-            </div>
-            <div className="flex flex-col">
-              <span className="text-lg font-black tracking-tight text-foreground">
-                Crisanthera<span className="text-primary">.</span>
-              </span>
-              <span className="text-[10px] font-semibold uppercase tracking-wider text-muted -mt-1">
-                Store
-              </span>
-            </div>
+    <header className="sticky top-0 z-40 w-full px-3 py-3 sm:px-6 md:px-10">
+      <div className="mx-auto flex max-w-[1220px] flex-wrap items-center justify-between gap-4">
+        {/* Brand Logo from acuan.html */}
+        <Link href="/" className="group flex items-center gap-2.5 focus:outline-none">
+          <div className="flex h-8 w-8 items-center justify-center rounded-xl border border-white/15 bg-white/10 transition-colors duration-300 group-hover:bg-[#a1f68b] group-hover:text-slate-950">
+            <span className="text-lg font-extrabold leading-none tracking-tighter">c</span>
+          </div>
+          <span className="text-lg font-semibold tracking-tight text-white/95">
+            crisanthera<span className="text-[#a1f68b]">.</span>
+          </span>
+        </Link>
+
+        {/* Center Pill Navigation from acuan.html */}
+        <nav className="order-3 flex w-full items-center justify-center overflow-x-auto rounded-full border border-white/[0.07] bg-[#181b28]/90 p-1.5 backdrop-blur-md lg:order-2 lg:w-auto">
+          <div className="flex items-center gap-1">
+            {navLinks.map((link) => {
+              const isActive =
+                link.href === "/"
+                  ? pathname === "/"
+                  : pathname.startsWith(link.href.split("?")[0]) &&
+                    (link.href.includes("?") ? typeof window !== "undefined" && window.location.search.includes(link.href.split("?")[1]) : true);
+
+              return (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  className={
+                    isActive
+                      ? "relative flex items-center gap-1.5 rounded-full bg-white px-4 py-2 text-xs font-semibold text-slate-950 shadow-md transition-all duration-300"
+                      : "rounded-full px-4 py-2 text-xs font-medium text-slate-400 transition-all duration-300 hover:text-white"
+                  }
+                >
+                  {isActive && <span className="h-2 w-2 rounded-full bg-slate-950 animate-pulse" />}
+                  <span>{link.label}</span>
+                </Link>
+              );
+            })}
+          </div>
+        </nav>
+
+        {/* Right User Actions from acuan.html */}
+        <div className="order-2 flex items-center gap-2.5 lg:order-3">
+          {/* Quick Search Button */}
+          <Link
+            href="/catalog"
+            className="flex h-10 w-10 items-center justify-center rounded-full border border-white/[0.07] bg-[#181b28] text-slate-300 transition-all hover:scale-105 hover:border-white/20 hover:text-white active:scale-95"
+            title="Cari Produk"
+          >
+            <Search size={16} />
           </Link>
 
-          {/* Desktop Navigation Links */}
-          <nav className="hidden md:flex items-center gap-6 text-sm font-medium">
-            <Link
-              href="/"
-              className="text-muted hover:text-foreground transition-colors"
-            >
-              Beranda
-            </Link>
-            <Link
-              href="/catalog"
-              className="text-muted hover:text-foreground transition-colors"
-            >
-              Semua Katalog
-            </Link>
-            <Link
-              href="/catalog?category=sticker"
-              className="flex items-center gap-1.5 text-muted hover:text-primary transition-colors"
-            >
-              <Sparkles size={14} /> Stiker Anime
-            </Link>
-            <Link
-              href="/catalog?category=template"
-              className="flex items-center gap-1.5 text-muted hover:text-primary transition-colors"
-            >
-              <Layers size={14} /> Next.js Templates
-            </Link>
-          </nav>
-        </div>
-
-        {/* Right Action Icons: Theme Switcher + Cart + Mobile Toggle */}
-        <div className="flex items-center gap-3 sm:gap-4">
-          <ThemeSwitcher />
-
-          {/* Cart Icon Trigger */}
+          {/* Cart Icon Trigger with Neon Dot */}
           <button
             onClick={toggleDrawer}
-            className="relative flex h-9 w-9 items-center justify-center rounded-full border border-border bg-surface text-foreground transition-colors hover:border-primary hover:text-primary"
-            aria-label="Buka Keranjang Belanja"
+            className="relative flex h-10 w-10 items-center justify-center rounded-full border border-white/[0.07] bg-[#181b28] text-slate-300 transition-all hover:scale-105 hover:border-white/20 hover:text-white active:scale-95"
+            title="Keranjang Belanja"
           >
-            <ShoppingBag size={18} />
+            <ShoppingBag size={16} />
             {totalItems > 0 && (
-              <span className="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-primary text-[10px] font-bold text-white shadow-[0_0_8px_var(--primary-glow)]">
-                {totalItems}
-              </span>
+              <span className="absolute top-2 right-2 h-2.5 w-2.5 rounded-full bg-[#a1f68b] shadow-[0_0_8px_#a1f68b]" />
             )}
           </button>
 
-          {/* Mobile Menu Toggle Button */}
+          {/* Theme Switcher Button */}
+          <ThemeSwitcher />
+
+          {/* Mobile Menu Toggle */}
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="flex h-9 w-9 items-center justify-center rounded-lg border border-border text-muted hover:text-foreground md:hidden"
-            aria-label="Menu"
+            className="flex h-10 w-10 items-center justify-center rounded-full border border-white/[0.07] bg-[#181b28] text-slate-300 lg:hidden"
           >
-            {mobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
+            {mobileMenuOpen ? <X size={18} /> : <Menu size={18} />}
           </button>
         </div>
       </div>
 
-      {/* Mobile Navigation Drawer */}
+      {/* Mobile Menu Overlay */}
       {mobileMenuOpen && (
-        <div className="border-b border-border bg-surface px-4 py-4 md:hidden animate-fade-in space-y-2">
-          <Link
-            href="/"
-            onClick={() => setMobileMenuOpen(false)}
-            className="block rounded-lg px-3 py-2 text-sm font-medium text-foreground hover:bg-surface-secondary"
-          >
-            Beranda
-          </Link>
-          <Link
-            href="/catalog"
-            onClick={() => setMobileMenuOpen(false)}
-            className="block rounded-lg px-3 py-2 text-sm font-medium text-foreground hover:bg-surface-secondary"
-          >
-            Semua Katalog
-          </Link>
-          <Link
-            href="/catalog?category=sticker"
-            onClick={() => setMobileMenuOpen(false)}
-            className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium text-foreground hover:bg-surface-secondary"
-          >
-            <Sparkles size={16} className="text-primary" /> Stiker Anime
-          </Link>
-          <Link
-            href="/catalog?category=template"
-            onClick={() => setMobileMenuOpen(false)}
-            className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium text-foreground hover:bg-surface-secondary"
-          >
-            <Layers size={16} className="text-primary" /> Next.js Templates
-          </Link>
+        <div className="mt-3 rounded-3xl border border-white/[0.08] bg-[#151722]/95 p-4 shadow-2xl backdrop-blur-xl lg:hidden space-y-2">
+          {navLinks.map((link) => (
+            <Link
+              key={link.href}
+              href={link.href}
+              onClick={() => setMobileMenuOpen(false)}
+              className="block rounded-2xl px-4 py-2.5 text-xs font-semibold text-slate-300 hover:bg-white/10 hover:text-white"
+            >
+              {link.label}
+            </Link>
+          ))}
           <Link
             href="/cart"
             onClick={() => setMobileMenuOpen(false)}
-            className="flex items-center justify-between rounded-lg px-3 py-2 text-sm font-medium text-foreground hover:bg-surface-secondary"
+            className="flex items-center justify-between rounded-2xl px-4 py-2.5 text-xs font-semibold text-slate-300 hover:bg-white/10 hover:text-white"
           >
-            <span className="flex items-center gap-2">
-              <ShoppingBag size={16} className="text-primary" /> Keranjang Belanja
-            </span>
-            <span className="rounded-full bg-primary/20 px-2 py-0.5 text-xs font-bold text-primary">
-              {totalItems}
+            <span>Keranjang ({totalItems})</span>
+            <span className="rounded-full bg-[#a1f68b] px-2 py-0.5 text-[10px] font-bold text-slate-950">
+              {totalItems} item
             </span>
           </Link>
         </div>
@@ -136,4 +125,3 @@ export function Navbar() {
     </header>
   );
 }
-

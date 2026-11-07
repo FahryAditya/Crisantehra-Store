@@ -1,233 +1,258 @@
 @import "tailwindcss";
 
 :root {
-  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-sans: var(--font-jakarta), 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
   --container-width: 1240px;
-  --radius-sm: 0.375rem;
-  --radius-md: 0.625rem;
-  --radius-lg: 0.875rem;
-  --radius-full: 9999px;
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
 
-  /* Default theme: Nihilux (Purple / Deep Void) */
-  --theme-name: "nihilux";
-  --background: #090611;
-  --foreground: #f3effa;
-  --surface: #120c22;
-  --surface-secondary: #1a1230;
-  --surface-hover: #221840;
-  --border: #281b47;
-  --border-focus: #7c3aed;
-  --muted: #9d92b8;
-  --muted-light: #52476d;
-  
-  --primary: #9333ea;
-  --primary-hover: #a855f7;
-  --primary-foreground: #ffffff;
-  --primary-glow: rgba(147, 51, 234, 0.45);
-  
-  --accent: #c084fc;
-  --secondary: #6366f1;
-  --glow: rgba(168, 85, 247, 0.4);
+  /* Ethereal Color System */
+  --obsidian: #0b0c12;
+  --card: #151722;
+  --card-hover: #1b1e2d;
+  --neon-lime: #a1f68b;
+  --neon-mint: #6ee7b7;
+  --lilac: #c084fc;
+  --coral: #ff6e6e;
 
-  --badge-sticker-bg: rgba(147, 51, 234, 0.18);
-  --badge-sticker-text: #d8b4fe;
-  --badge-sticker-border: rgba(147, 51, 234, 0.4);
-
-  --badge-template-bg: rgba(59, 130, 246, 0.18);
-  --badge-template-text: #93c5fd;
-  --badge-template-border: rgba(59, 130, 246, 0.4);
+  /* Nihilux Theme Default */
+  --background: #090a0f;
+  --foreground: #ffffff;
+  --primary: #a1f68b;
+  --primary-glow: rgba(161, 246, 139, 0.35);
+  --secondary: #c084fc;
+  --border: rgba(255, 255, 255, 0.08);
+  --surface: #151722;
+  --surface-secondary: #1b1e2d;
+  --muted: #94a3b8;
 }
 
 [data-theme="nihilux"] {
-  --theme-name: "nihilux";
-  --background: #090611;
-  --foreground: #f3effa;
-  --surface: #120c22;
-  --surface-secondary: #1a1230;
-  --surface-hover: #221840;
-  --border: #281b47;
-  --border-focus: #9333ea;
-  --muted: #9d92b8;
-  --muted-light: #52476d;
-
-  --primary: #9333ea;
-  --primary-hover: #a855f7;
-  --primary-foreground: #ffffff;
-  --primary-glow: rgba(147, 51, 234, 0.45);
-
-  --accent: #c084fc;
-  --secondary: #6366f1;
-  --glow: rgba(168, 85, 247, 0.4);
-
-  --badge-sticker-bg: rgba(147, 51, 234, 0.18);
-  --badge-sticker-text: #d8b4fe;
-  --badge-sticker-border: rgba(147, 51, 234, 0.4);
-
-  --badge-template-bg: rgba(99, 102, 241, 0.18);
-  --badge-template-text: #a5b4fc;
-  --badge-template-border: rgba(99, 102, 241, 0.4);
+  --background: #090a0f;
+  --foreground: #ffffff;
+  --primary: #c084fc;
+  --primary-glow: rgba(192, 132, 252, 0.4);
+  --secondary: #6ee7b7;
+  --border: rgba(255, 255, 255, 0.08);
+  --surface: #151722;
+  --surface-secondary: #1b1e2d;
+  --muted: #94a3b8;
 }
 
 [data-theme="aha"] {
-  --theme-name: "aha";
-  --background: #110508;
-  --foreground: #fdf2f4;
-  --surface: #1f0a10;
-  --surface-secondary: #2e0f18;
-  --surface-hover: #3d1421;
-  --border: #4a1523;
-  --border-focus: #f43f5e;
-  --muted: #b58c97;
-  --muted-light: #614049;
-
-  --primary: #f43f5e;
-  --primary-hover: #fb7185;
-  --primary-foreground: #ffffff;
-  --primary-glow: rgba(244, 63, 94, 0.45);
-
-  --accent: #fda4af;
-  --secondary: #f97316;
-  --glow: rgba(251, 113, 133, 0.4);
-
-  --badge-sticker-bg: rgba(244, 63, 94, 0.18);
-  --badge-sticker-text: #fecdd3;
-  --badge-sticker-border: rgba(244, 63, 94, 0.4);
-
-  --badge-template-bg: rgba(249, 115, 22, 0.18);
-  --badge-template-text: #fdba74;
-  --badge-template-border: rgba(249, 115, 22, 0.4);
+  --background: #0d090d;
+  --foreground: #ffffff;
+  --primary: #ff6e6e;
+  --primary-glow: rgba(255, 110, 110, 0.4);
+  --secondary: #a1f68b;
+  --border: rgba(255, 255, 255, 0.08);
+  --surface: #1a141b;
+  --surface-secondary: #261c28;
+  --muted: #a8a29e;
 }
 
 @theme {
+  --color-obsidian: var(--obsidian);
+  --color-card: var(--card);
+  --color-cardHover: var(--card-hover);
+  --color-neonLime: var(--neon-lime);
+  --color-neonMint: var(--neon-mint);
+  --color-lilac: var(--lilac);
+  --color-coral: var(--coral);
+
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-surface: var(--surface);
   --color-surface-secondary: var(--surface-secondary);
-  --color-surface-hover: var(--surface-hover);
   --color-border: var(--border);
-  --color-muted: var(--muted);
   --color-primary: var(--primary);
-  --color-primary-hover: var(--primary-hover);
-  --color-primary-glow: var(--primary-glow);
-  --color-accent: var(--accent);
   --color-secondary: var(--secondary);
-
-  --animate-fade-in: fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
-  --animate-float: float 4s ease-in-out infinite;
-  --animate-sparkle: sparkle 2s ease-in-out infinite;
-  --animate-glow: softGlow 3s ease-in-out infinite;
-  --animate-skeleton: skeletonPulse 1.5s ease-in-out infinite;
-
-  @keyframes fadeIn {
-    from {
-      opacity: 0;
-      transform: translateY(10px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-
-  @keyframes float {
-    0%, 100% {
-      transform: translateY(0);
-    }
-    50% {
-      transform: translateY(-8px);
-    }
-  }
-
-  @keyframes sparkle {
-    0%, 100% {
-      opacity: 1;
-      transform: scale(1);
-    }
-    50% {
-      opacity: 0.6;
-      transform: scale(0.92);
-    }
-  }
-
-  @keyframes softGlow {
-    0%, 100% {
-      box-shadow: 0 0 15px var(--glow);
-    }
-    50% {
-      box-shadow: 0 0 35px var(--glow);
-    }
-  }
-
-  @keyframes skeletonPulse {
-    0%, 100% {
-      opacity: 0.5;
-    }
-    50% {
-      opacity: 1;
-    }
-  }
-}
-
-* {
-  transition: background-color 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+  --color-muted: var(--muted);
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
   font-family: var(--font-sans);
+  background: radial-gradient(circle at 15% 15%, #2b2740 0%, #141522 45%, #090a0f 100%);
   min-height: 100vh;
+  color: #ffffff;
   overflow-x: hidden;
+  font-feature-settings: "tnum" 1, "cv05" 1;
 }
 
-/* Custom Utilities for Crisanthera Design System */
-@utility flex-center {
-  display: flex;
+/* Tablet Frame from acuan.html */
+.tablet-frame {
+  background: #0b0c12;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 
+    0 35px 80px -15px rgba(0, 0, 0, 0.75),
+    0 0 0 1px rgba(255, 255, 255, 0.1);
+  border-radius: 40px;
+}
+
+/* Hero Balance Card Gradient & Abstract Shapes from acuan.html */
+.hero-balance-card {
+  background: linear-gradient(125deg, #76e4ca 0%, #9df68c 55%, #b9f976 100%);
+  position: relative;
+  overflow: hidden;
+  border-radius: 26px;
+}
+
+.hero-balance-card::before {
+  content: '';
+  position: absolute;
+  right: -35px;
+  top: -20px;
+  width: 190px;
+  height: 220px;
+  background: rgba(15, 23, 42, 0.14);
+  border-radius: 36px;
+  transform: rotate(-28deg);
+  pointer-events: none;
+  transition: transform 0.6s var(--ease-out-expo);
+}
+
+.hero-balance-card::after {
+  content: '';
+  position: absolute;
+  right: -50px;
+  bottom: -45px;
+  width: 170px;
+  height: 180px;
+  background: rgba(15, 23, 42, 0.18);
+  border-radius: 32px;
+  transform: rotate(18deg);
+  pointer-events: none;
+  transition: transform 0.6s var(--ease-out-expo);
+}
+
+.hero-balance-card:hover::before {
+  transform: rotate(-22deg) scale(1.06) translateX(-6px);
+}
+.hero-balance-card:hover::after {
+  transform: rotate(24deg) scale(1.06) translateY(-6px);
+}
+
+/* Bento Cards from acuan.html */
+.bento-card {
+  background: linear-gradient(165deg, rgba(31, 35, 52, 0.75) 0%, rgba(19, 21, 32, 0.9) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  box-shadow: 0 12px 32px -8px rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-radius: 26px;
+  transition: transform 0.35s var(--ease-out-expo), border-color 0.35s ease;
+}
+
+.bento-card:hover {
+  border-color: rgba(255, 255, 255, 0.14);
+}
+
+/* Income Card subtle green ambient glow */
+.income-card {
+  background: radial-gradient(circle at 90% 20%, rgba(110, 231, 183, 0.16), transparent 60%),
+              linear-gradient(165deg, rgba(31, 35, 52, 0.8) 0%, rgba(19, 21, 32, 0.95) 100%);
+}
+
+/* Expense Card subtle coral ambient glow */
+.expense-card {
+  background: radial-gradient(circle at 90% 80%, rgba(255, 110, 110, 0.14), transparent 60%),
+              linear-gradient(165deg, rgba(31, 35, 52, 0.8) 0%, rgba(19, 21, 32, 0.95) 100%);
+}
+
+/* Gooey Pill Connected Button from acuan.html */
+.gooey-group {
+  display: inline-flex;
   align-items: center;
-  justify-content: center;
+  filter: drop-shadow(0 4px 12px rgba(0,0,0,0.12));
+}
+.gooey-bridge {
+  width: 10px;
+  height: 16px;
+  background: #ffffff;
+  margin: 0 -3px;
+  position: relative;
+  z-index: 1;
+}
+.gooey-bridge::before,
+.gooey-bridge::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 6px;
+  background: #8ef0a3;
+  border-radius: 50%;
+}
+.gooey-bridge::before { top: -4px; }
+.gooey-bridge::after { bottom: -4px; }
+
+/* 3D Stacked Cards from acuan.html */
+.wallet-stack {
+  position: relative;
+  height: 245px;
+  perspective: 1000px;
+  cursor: pointer;
+  user-select: none;
 }
 
-@utility flex-between {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
+.credit-card {
+  position: absolute;
+  left: 0;
+  right: 0;
+  margin: auto;
+  border-radius: 22px;
+  transition: all 0.5s var(--ease-out-expo);
 }
 
-@utility glass-panel {
-  background: color-mix(in srgb, var(--surface) 80%, transparent);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid var(--border);
+.card-layer-1 {
+  top: 0px;
+  width: 82%;
+  height: 110px;
+  background: linear-gradient(95deg, #f3956f 0%, #fbbf77 100%);
+  z-index: 1;
 }
 
-@utility glow-box {
-  box-shadow: 0 0 25px var(--primary-glow);
+.card-layer-2 {
+  top: 24px;
+  width: 91%;
+  height: 120px;
+  background: linear-gradient(95deg, #67e8cb 0%, #b4f878 100%);
+  z-index: 2;
 }
 
-@utility skeleton {
-  background: var(--surface-secondary);
-  border-radius: var(--radius-md);
-  animation: skeletonPulse 1.5s ease-in-out infinite;
+.card-layer-3 {
+  top: 56px;
+  width: 96%;
+  height: 145px;
+  background: linear-gradient(125deg, #d8b4fe 0%, #9370db 50%, #5b48a2 100%);
+  z-index: 3;
+  box-shadow: 0 -6px 20px rgba(0,0,0,0.25);
 }
 
-/* Accessibility */
-:focus-visible {
-  outline: 2px solid var(--primary);
-  outline-offset: 3px;
+.card-layer-4 {
+  top: 126px;
+  width: 100%;
+  height: 115px;
+  background: linear-gradient(180deg, rgba(126, 118, 179, 0.42) 0%, rgba(45, 48, 86, 0.65) 60%, rgba(22, 25, 38, 0.95) 100%);
+  backdrop-filter: blur(18px) saturate(160%);
+  -webkit-backdrop-filter: blur(18px) saturate(160%);
+  border-top: 1px solid rgba(255, 255, 255, 0.28);
+  border-left: 1px solid rgba(255, 255, 255, 0.12);
+  border-right: 1px solid rgba(255, 255, 255, 0.12);
+  z-index: 4;
+  box-shadow: 0 -10px 25px rgba(0, 0, 0, 0.35), 0 18px 30px -10px rgba(0, 0, 0, 0.6);
 }
 
-button:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
+/* Expanded state for 3D stack */
+.wallet-stack.expanded {
+  height: 310px;
 }
+.wallet-stack.expanded .card-layer-1 { top: 0px; transform: scale(0.96); }
+.wallet-stack.expanded .card-layer-2 { top: 48px; transform: scale(0.98); }
+.wallet-stack.expanded .card-layer-3 { top: 98px; transform: scale(1); }
+.wallet-stack.expanded .card-layer-4 { top: 185px; }
 
-@media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
-    scroll-behavior: auto !important;
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-  }
-}
+/* Custom Scrollbar from acuan.html */
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 99px; }

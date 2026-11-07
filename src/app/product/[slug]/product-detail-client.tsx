@@ -6,7 +6,6 @@ import { useRouter } from "next/navigation";
 import { MOCK_PRODUCTS, formatRupiah } from "@/data/mock-products";
 import { ProductVariant } from "@/types/store";
 import { useCartStore } from "@/stores/cart-store";
-import { Badge } from "@/components/ui/badge";
 import { ProductCard } from "@/components/product/product-card";
 import {
   Sparkles,
@@ -29,11 +28,11 @@ export default function ProductDetailClient({ slug }: { slug: string }) {
   if (!product) {
     return (
       <div className="mx-auto max-w-xl py-24 text-center">
-        <h2 className="text-2xl font-bold text-foreground">Produk Tidak Ditemukan</h2>
-        <p className="mt-2 text-xs text-muted">Produk yang kamu cari mungkin telah dihapus atau tautan salah.</p>
+        <h2 className="text-2xl font-bold text-white">Produk Tidak Ditemukan</h2>
+        <p className="mt-2 text-xs text-slate-400">Produk yang kamu cari mungkin telah dihapus.</p>
         <Link
           href="/catalog"
-          className="mt-6 inline-flex items-center gap-2 rounded-lg bg-primary px-4 py-2 text-xs font-bold text-white shadow-md"
+          className="mt-6 inline-flex items-center gap-2 rounded-full bg-[#a1f68b] px-5 py-2.5 text-xs font-bold text-slate-950 shadow-md"
         >
           <ArrowLeft size={14} /> Kembali ke Katalog
         </Link>
@@ -74,62 +73,60 @@ export default function ProductDetailClient({ slug }: { slug: string }) {
     }
   };
 
-  // Related products from same category
   const relatedProducts = MOCK_PRODUCTS.filter(
     (p) => p.type === product.type && p.id !== product.id
   ).slice(0, 3);
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8 space-y-16">
-      {/* Breadcrumb Navigation */}
-      <div className="flex items-center gap-2 text-xs text-muted">
-        <Link href="/" className="hover:text-foreground">
-          Beranda
-        </Link>
+    <div className="mx-auto max-w-[1220px] px-3 py-4 sm:px-6 md:px-8 space-y-12">
+      {/* Breadcrumb */}
+      <div className="flex items-center gap-2 text-xs text-slate-400">
+        <Link href="/" className="hover:text-white">Beranda</Link>
         <span>/</span>
-        <Link href={`/catalog?category=${product.type}`} className="hover:text-foreground capitalize">
+        <Link href={`/catalog?category=${product.type}`} className="hover:text-white capitalize">
           {product.type === "sticker" ? "Stiker Anime" : "Next.js Templates"}
         </Link>
         <span>/</span>
-        <span className="text-foreground font-medium truncate max-w-xs">{product.name}</span>
+        <span className="text-white font-medium truncate max-w-xs">{product.name}</span>
       </div>
 
-      {/* Main Product Layout */}
-      <div className="grid grid-cols-1 gap-12 lg:grid-cols-12">
+      {/* Main Grid in Bento Style */}
+      <div className="grid grid-cols-1 gap-8 lg:grid-cols-12 items-start">
         {/* Left: Gallery Column */}
         <div className="space-y-4 lg:col-span-6">
-          <div className="relative aspect-[4/3] w-full overflow-hidden rounded-2xl border border-border bg-surface-secondary shadow-lg">
-            <img
-              src={product.images[selectedImageIndex] || product.images[0]}
-              alt={product.name}
-              className="h-full w-full object-cover transition-transform duration-500 hover:scale-105"
-            />
+          <div className="bento-card overflow-hidden rounded-[28px] p-3 shadow-2xl">
+            <div className="relative aspect-[4/3] w-full overflow-hidden rounded-2xl bg-[#0b0c12]">
+              <img
+                src={product.images[selectedImageIndex] || product.images[0]}
+                alt={product.name}
+                className="h-full w-full object-cover transition-transform duration-500 hover:scale-105"
+              />
 
-            {/* Badges Overlay */}
-            <div className="absolute top-4 left-4 flex gap-2">
-              {product.type === "sticker" ? (
-                <Badge variant="sticker">
-                  <Sparkles size={12} /> Stiker Vinyl
-                </Badge>
-              ) : (
-                <Badge variant="template">
-                  <Layers size={12} /> Next.js 16 Template
-                </Badge>
-              )}
+              <div className="absolute top-4 left-4 flex gap-2">
+                {product.type === "sticker" ? (
+                  <span className="flex items-center gap-1 rounded-full border border-[#6ee7b7]/30 bg-[#6ee7b7]/15 px-3 py-1 text-xs font-bold text-[#6ee7b7] backdrop-blur-md">
+                    <Sparkles size={12} /> Stiker Vinyl
+                  </span>
+                ) : (
+                  <span className="flex items-center gap-1 rounded-full border border-[#c084fc]/30 bg-[#c084fc]/15 px-3 py-1 text-xs font-bold text-[#c084fc] backdrop-blur-md">
+                    <Layers size={12} /> Next.js 16 Template
+                  </span>
+                )}
+              </div>
             </div>
           </div>
 
-          {/* Thumbnail Gallery Strip */}
+          {/* Thumbnails */}
           {product.images.length > 1 && (
             <div className="flex gap-3">
               {product.images.map((img, idx) => (
                 <button
                   key={idx}
                   onClick={() => setSelectedImageIndex(idx)}
-                  className={`h-20 w-20 overflow-hidden rounded-xl border-2 transition-all ${
+                  className={`h-20 w-20 overflow-hidden rounded-2xl border-2 transition-all ${
                     selectedImageIndex === idx
-                      ? "border-primary shadow-[0_0_12px_var(--primary-glow)]"
-                      : "border-border opacity-70 hover:opacity-100"
+                      ? "border-[#a1f68b] shadow-[0_0_12px_#a1f68b]"
+                      : "border-white/10 opacity-70 hover:opacity-100"
                   }`}
                 >
                   <img src={img} alt="Thumbnail" className="h-full w-full object-cover" />
@@ -139,58 +136,57 @@ export default function ProductDetailClient({ slug }: { slug: string }) {
           )}
         </div>
 
-        {/* Right: Product Info & Order Action Column */}
-        <div className="space-y-6 lg:col-span-6">
+        {/* Right: Info & Order Box */}
+        <div className="bento-card p-6 sm:p-8 space-y-6 lg:col-span-6">
           <div>
             <div className="flex items-center justify-between">
-              <div className="flex items-center gap-1.5 text-xs text-amber-400">
-                <Star size={14} className="fill-amber-400" />
-                <span className="font-bold text-foreground">{product.rating}</span>
-                <span className="text-muted">({product.reviewsCount} Ulasan pembeli)</span>
+              <div className="flex items-center gap-1.5 text-xs text-amber-300">
+                <Star size={14} className="fill-amber-300" />
+                <span className="font-bold text-white">{product.rating}</span>
+                <span className="text-slate-400">({product.reviewsCount} Ulasan pembeli)</span>
               </div>
 
               <button
                 onClick={handleShare}
-                className="flex items-center gap-1 text-xs text-muted hover:text-foreground transition-colors"
-                title="Salin tautan produk"
+                className="flex items-center gap-1 text-xs text-slate-400 hover:text-white transition-colors"
               >
-                <Share2 size={14} />
+                <Share2 size={13} />
                 <span>{copiedLink ? "Disalin!" : "Bagikan"}</span>
               </button>
             </div>
 
-            <h1 className="mt-2 text-2xl font-black text-foreground sm:text-3xl">
+            <h1 className="mt-2 text-2xl font-black text-white sm:text-3xl tracking-tight">
               {product.name}
             </h1>
 
-            <p className="mt-1 text-sm text-muted">{product.tagline}</p>
+            <p className="mt-1 text-xs sm:text-sm text-slate-400">{product.tagline}</p>
           </div>
 
           {/* Pricing Box */}
-          <div className="rounded-xl border border-border bg-surface p-4">
+          <div className="rounded-2xl border border-white/[0.06] bg-[#0b0c12]/60 p-4">
             <div className="flex items-baseline gap-3">
-              <span className="text-3xl font-black text-foreground">
+              <span className="text-3xl font-black text-white">
                 {formatRupiah(currentPrice)}
               </span>
               {originalPrice && (
-                <span className="text-sm text-muted line-through">
+                <span className="text-sm text-slate-500 line-through">
                   {formatRupiah(originalPrice)}
                 </span>
               )}
               {discountPercent > 0 && (
-                <span className="rounded-full bg-primary/20 px-2.5 py-0.5 text-xs font-bold text-primary">
+                <span className="rounded-full bg-[#ff6e6e] px-2.5 py-0.5 text-xs font-bold text-slate-950">
                   Hemat {discountPercent}%
                 </span>
               )}
             </div>
 
-            <div className="mt-2 flex items-center gap-2 text-xs text-muted">
+            <div className="mt-2 text-xs">
               {product.type === "template" ? (
-                <span className="flex items-center gap-1 text-emerald-400 font-medium">
+                <span className="flex items-center gap-1.5 text-[#a1f68b] font-medium">
                   <Check size={14} /> Akses unduhan digital instan setelah pembayaran terverifikasi
                 </span>
               ) : (
-                <span className="flex items-center gap-1 text-emerald-400 font-medium">
+                <span className="flex items-center gap-1.5 text-[#a1f68b] font-medium">
                   <Truck size={14} /> Stok Tersedia ({product.stock} pcs) • Siap kirim hari ini
                 </span>
               )}
@@ -198,11 +194,11 @@ export default function ProductDetailClient({ slug }: { slug: string }) {
           </div>
 
           {/* Variant Selector */}
-          <div className="space-y-2.5">
-            <label className="text-xs font-bold uppercase tracking-wider text-muted">
+          <div className="space-y-2">
+            <label className="text-xs font-bold uppercase tracking-wider text-slate-400">
               Pilih Varian:
             </label>
-            <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
               {product.variants.map((v) => {
                 const isSelected = selectedVariant.id === v.id;
                 const offset = v.priceOffset || 0;
@@ -210,38 +206,38 @@ export default function ProductDetailClient({ slug }: { slug: string }) {
                   <button
                     key={v.id}
                     onClick={() => setSelectedVariant(v)}
-                    className={`flex items-center justify-between rounded-xl border p-3 text-left transition-all ${
+                    className={`flex items-center justify-between rounded-2xl border p-3 text-left transition-all ${
                       isSelected
-                        ? "border-primary bg-primary/10 shadow-[0_0_12px_var(--primary-glow)]"
-                        : "border-border bg-surface hover:bg-surface-secondary"
+                        ? "border-[#a1f68b] bg-[#a1f68b]/10 shadow-[0_0_12px_rgba(161,246,139,0.25)]"
+                        : "border-white/[0.06] bg-[#0b0c12]/40 hover:bg-[#0b0c12]/80"
                     }`}
                   >
                     <div>
-                      <div className="text-xs font-bold text-foreground">{v.name}</div>
+                      <div className="text-xs font-bold text-white">{v.name}</div>
                       {offset !== 0 && (
-                        <div className="text-[11px] text-muted">
+                        <div className="text-[11px] text-slate-400">
                           {offset > 0 ? `+${formatRupiah(offset)}` : formatRupiah(offset)}
                         </div>
                       )}
                     </div>
-                    {isSelected && <Check size={16} className="text-primary" />}
+                    {isSelected && <Check size={16} className="text-[#a1f68b]" />}
                   </button>
                 );
               })}
             </div>
           </div>
 
-          {/* Template Specific Details (Tech Stack & Live Preview) */}
+          {/* Template Details */}
           {product.type === "template" && (
-            <div className="space-y-3 rounded-xl border border-border bg-surface p-4 text-xs">
+            <div className="space-y-3 rounded-2xl border border-white/[0.06] bg-[#0b0c12]/60 p-4 text-xs">
               <div className="flex items-center justify-between">
-                <span className="font-bold text-foreground">Live Demo Preview:</span>
+                <span className="font-bold text-white">Live Demo Preview:</span>
                 {product.demoUrl && (
                   <a
                     href={product.demoUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center gap-1 text-primary hover:underline font-bold"
+                    className="inline-flex items-center gap-1 text-[#a1f68b] hover:underline font-bold"
                   >
                     Buka Preview Demo <ExternalLink size={12} />
                   </a>
@@ -250,12 +246,12 @@ export default function ProductDetailClient({ slug }: { slug: string }) {
 
               {product.techStack && (
                 <div>
-                  <span className="text-muted block mb-1.5 font-semibold">Tech Stack Termasuk:</span>
+                  <span className="text-slate-400 block mb-1.5 font-semibold">Tech Stack Termasuk:</span>
                   <div className="flex flex-wrap gap-1.5">
                     {product.techStack.map((tech) => (
                       <span
                         key={tech}
-                        className="rounded-md border border-border bg-surface-secondary px-2 py-0.5 font-mono text-[11px] text-foreground"
+                        className="rounded-lg border border-white/10 bg-[#181b28] px-2.5 py-0.5 font-mono text-[11px] text-white"
                       >
                         {tech}
                       </span>
@@ -266,56 +262,48 @@ export default function ProductDetailClient({ slug }: { slug: string }) {
             </div>
           )}
 
-          {/* Sticker Specific Details */}
+          {/* Sticker Details */}
           {product.type === "sticker" && (
-            <div className="grid grid-cols-2 gap-3 rounded-xl border border-border bg-surface p-4 text-xs">
+            <div className="grid grid-cols-2 gap-3 rounded-2xl border border-white/[0.06] bg-[#0b0c12]/60 p-4 text-xs">
               <div>
-                <span className="text-muted block">Dimensi Ukuran:</span>
-                <span className="font-bold text-foreground">{product.dimensions}</span>
+                <span className="text-slate-400 block">Dimensi Ukuran:</span>
+                <span className="font-bold text-white">{product.dimensions}</span>
               </div>
               <div>
-                <span className="text-muted block">Finishing Bahan:</span>
-                <span className="font-bold text-foreground">{product.finish}</span>
+                <span className="text-slate-400 block">Finishing Bahan:</span>
+                <span className="font-bold text-white">{product.finish}</span>
               </div>
             </div>
           )}
 
-          {/* Quantity and Order Actions */}
+          {/* Actions */}
           <div className="space-y-3 pt-2">
             <div className="flex items-center gap-4">
-              <span className="text-xs font-bold uppercase tracking-wider text-muted">
+              <span className="text-xs font-bold uppercase tracking-wider text-slate-400">
                 Jumlah:
               </span>
-              <div className="flex items-center rounded-xl border border-border bg-surface px-3 py-1.5">
-                <button
-                  onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                  className="text-muted hover:text-foreground"
-                >
+              <div className="flex items-center rounded-full border border-white/10 bg-[#0b0c12] px-3.5 py-1.5">
+                <button onClick={() => setQuantity(Math.max(1, quantity - 1))} className="text-slate-400 hover:text-white">
                   <Minus size={14} />
                 </button>
-                <span className="w-8 text-center text-xs font-bold text-foreground">
-                  {quantity}
-                </span>
-                <button
-                  onClick={() => setQuantity(quantity + 1)}
-                  className="text-muted hover:text-foreground"
-                >
+                <span className="w-8 text-center text-xs font-bold text-white">{quantity}</span>
+                <button onClick={() => setQuantity(quantity + 1)} className="text-slate-400 hover:text-white">
                   <Plus size={14} />
                 </button>
               </div>
             </div>
 
-            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 pt-2">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
               <button
                 onClick={handleAddToCart}
-                className="flex items-center justify-center gap-2 rounded-xl border border-primary bg-primary/10 py-3.5 text-xs font-bold text-primary transition-all hover:bg-primary hover:text-white hover:shadow-[0_0_15px_var(--primary-glow)] active:scale-95"
+                className="flex items-center justify-center gap-2 rounded-full border border-[#a1f68b]/40 bg-[#a1f68b]/15 py-3.5 text-xs font-bold text-[#a1f68b] transition-all hover:bg-[#a1f68b] hover:text-slate-950 active:scale-95 shadow-md"
               >
-                <ShoppingBag size={16} /> Tambah ke Keranjang
+                <ShoppingBag size={15} /> Tambah ke Keranjang
               </button>
 
               <button
                 onClick={handleBuyNow}
-                className="flex items-center justify-center gap-2 rounded-xl bg-primary py-3.5 text-xs font-bold text-white shadow-[0_0_20px_var(--primary-glow)] transition-all hover:opacity-90 active:scale-95"
+                className="flex items-center justify-center gap-2 rounded-full bg-white text-slate-950 py-3.5 text-xs font-bold hover:bg-[#a1f68b] transition-all active:scale-95 shadow-lg"
               >
                 Beli Sekarang
               </button>
@@ -324,19 +312,19 @@ export default function ProductDetailClient({ slug }: { slug: string }) {
         </div>
       </div>
 
-      {/* Product Description Section */}
-      <div className="rounded-2xl border border-border bg-surface p-6 sm:p-8 space-y-4">
-        <h3 className="text-lg font-bold text-foreground">Deskripsi Lengkap Produk</h3>
-        <p className="text-xs sm:text-sm text-muted leading-relaxed whitespace-pre-line">
+      {/* Description */}
+      <div className="bento-card p-6 sm:p-8 space-y-3">
+        <h3 className="text-lg font-bold text-white">Deskripsi Lengkap Produk</h3>
+        <p className="text-xs sm:text-sm text-slate-400 leading-relaxed whitespace-pre-line">
           {product.description}
         </p>
       </div>
 
-      {/* Related Products Recommendation */}
+      {/* Related Products */}
       {relatedProducts.length > 0 && (
-        <div className="space-y-6">
-          <h3 className="text-xl font-bold text-foreground">Produk Terkait Lainnya</h3>
-          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="space-y-4">
+          <h3 className="text-xl font-bold text-white">Produk Terkait Lainnya</h3>
+          <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
             {relatedProducts.map((rel) => (
               <ProductCard key={rel.id} product={rel} />
             ))}
@@ -346,4 +334,3 @@ export default function ProductDetailClient({ slug }: { slug: string }) {
     </div>
   );
 }
-

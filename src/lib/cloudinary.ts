@@ -8,6 +8,8 @@ cloudinary.config({
   secure: true,
 });
 
+
+
 export { cloudinary };
 
 /**
