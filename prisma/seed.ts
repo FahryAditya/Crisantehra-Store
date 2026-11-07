@@ -1,4 +1,5 @@
 import "dotenv/config";
+import * as argon2 from "argon2";
 import { PrismaPg } from "@prisma/adapter-pg";
 import { PrismaClient } from "../generated/prisma/client";
 import { MOCK_PRODUCTS } from "../src/data/mock-products";
@@ -8,12 +9,46 @@ const prisma = new PrismaClient({
 });
 
 async function main() {
-  console.log("Memulai seeding database Neon...");
+  console.log("🌱 Memulai official seeder untuk Neon PostgreSQL...");
 
-  // Clear existing products to prevent unique constraint conflict
+  // 1. Clear existing products to ensure clean state
   await prisma.productVariant.deleteMany();
   await prisma.product.deleteMany();
+  await prisma.user.deleteMany();
 
+  // 2. Create Super Admin User
+  const adminHashedPassword = await argon2.hash("AdminCrisanthera2026!", {
+    type: argon2.argon2id,
+  });
+
+  const admin = await prisma.user.create({
+    data: {
+      email: "admin@crisanthera.store",
+      password: adminHashedPassword,
+      name: "Fahry Aditya",
+      phone: "+62 811-0000-8888",
+      role: "ADMIN",
+    },
+  });
+  console.log(`✓ Super Admin dibuat: ${admin.email} (Role: ${admin.role})`);
+
+  // 3. Create Customer Demo User
+  const customerHashedPassword = await argon2.hash("AlyaCustomer2026!", {
+    type: argon2.argon2id,
+  });
+
+  const customer = await prisma.user.create({
+    data: {
+      email: "alya@crisanthera.store",
+      password: customerHashedPassword,
+      name: "Alya Renanta",
+      phone: "+62 812-3456-7890",
+      role: "CUSTOMER",
+    },
+  });
+  console.log(`✓ Customer Demo dibuat: ${customer.email} (Role: ${customer.role})`);
+
+  // 4. Seed Official Products
   for (const item of MOCK_PRODUCTS) {
     const product = await prisma.product.create({
       data: {
@@ -51,11 +86,12 @@ async function main() {
       },
     });
 
-    console.log(`✓ Ditambahkan: ${product.name} (${product.type})`);
+    console.log(`✓ Produk dimasukkan: ${product.name} (${product.type})`);
   }
 
-  const count = await prisma.product.count();
-  console.log(`\nBerhasil mengisi database Neon dengan ${count} produk!`);
+  const userCount = await prisma.user.count();
+  const productCount = await prisma.product.count();
+  console.log(`\n✨ Seeding sukses: ${userCount} users, ${productCount} products resmi di Neon DB!`);
 }
 
 main()
@@ -66,4 +102,3 @@ main()
   .finally(async () => {
     await prisma.$disconnect();
   });
-

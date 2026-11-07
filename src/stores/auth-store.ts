@@ -16,8 +16,9 @@ interface AuthState {
   user: AuthUser | null;
   isAuthenticated: boolean;
   login: (user: AuthUser) => void;
-  logout: () => void;
+  logout: () => Promise<void>;
   updateUser: (updates: Partial<AuthUser>) => void;
+  checkSession: () => Promise<void>;
 }
 
 export const useAuthStore = create<AuthState>()(
@@ -30,7 +31,12 @@ export const useAuthStore = create<AuthState>()(
         set({ user, isAuthenticated: true });
       },
 
-      logout: () => {
+      logout: async () => {
+        try {
+          await fetch("/api/auth/logout", { method: "POST" });
+        } catch (e) {
+          console.error("Logout request error:", e);
+        }
         set({ user: null, isAuthenticated: false });
       },
 
@@ -40,10 +46,23 @@ export const useAuthStore = create<AuthState>()(
           set({ user: { ...currentUser, ...updates } });
         }
       },
+
+      checkSession: async () => {
+        try {
+          const res = await fetch("/api/auth/me");
+          const data = await res.json();
+          if (data.authenticated && data.user) {
+            set({ user: data.user, isAuthenticated: true });
+          } else {
+            set({ user: null, isAuthenticated: false });
+          }
+        } catch {
+          // preserve offline state if needed
+        }
+      },
     }),
     {
       name: "crisanthera-auth",
     }
   )
 );
-

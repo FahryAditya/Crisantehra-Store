@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo, Suspense } from "react";
+import { useState, useMemo, useEffect, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import { MOCK_PRODUCTS, CATEGORIES } from "@/data/mock-products";
 import { ProductCard } from "@/components/product/product-card";
@@ -12,26 +12,38 @@ function CatalogContent() {
   const initialCategory = (searchParams.get("category") as ProductType) || "all";
   const initialTag = searchParams.get("tag") || "";
 
+  const [products, setProducts] = useState<any[]>(MOCK_PRODUCTS);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<string>(initialCategory);
   const [selectedTag, setSelectedTag] = useState<string>(initialTag);
   const [sortBy, setSortBy] = useState<"featured" | "price-asc" | "price-desc" | "rating">("featured");
   const [themeFilter, setThemeFilter] = useState<"all" | CharacterTheme>("all");
 
+  useEffect(() => {
+    fetch("/api/products")
+      .then((r) => r.json())
+      .then((res) => {
+        if (res.success && Array.isArray(res.data) && res.data.length > 0) {
+          setProducts(res.data);
+        }
+      })
+      .catch(() => {});
+  }, []);
+
   // Extract all unique tags
   const allTags = useMemo(() => {
     const set = new Set<string>();
-    MOCK_PRODUCTS.forEach((p) => p.tags.forEach((t) => set.add(t)));
+    products.forEach((p) => p.tags?.forEach((t: string) => set.add(t)));
     return Array.from(set);
-  }, []);
+  }, [products]);
 
   // Filtered & Sorted products
   const filteredProducts = useMemo(() => {
-    return MOCK_PRODUCTS.filter((product) => {
+    return products.filter((product) => {
       if (selectedCategory !== "all" && product.type !== selectedCategory) {
         return false;
       }
-      if (selectedTag && !product.tags.includes(selectedTag)) {
+      if (selectedTag && !product.tags?.includes(selectedTag)) {
         return false;
       }
       if (themeFilter !== "all" && product.themeAura !== themeFilter) {
@@ -40,8 +52,8 @@ function CatalogContent() {
       if (searchQuery.trim()) {
         const query = searchQuery.toLowerCase();
         const matchesName = product.name.toLowerCase().includes(query);
-        const matchesTagline = product.tagline.toLowerCase().includes(query);
-        const matchesTags = product.tags.some((t) => t.toLowerCase().includes(query));
+        const matchesTagline = product.tagline?.toLowerCase().includes(query);
+        const matchesTags = product.tags?.some((t: string) => t.toLowerCase().includes(query));
         return matchesName || matchesTagline || matchesTags;
       }
       return true;
@@ -51,7 +63,7 @@ function CatalogContent() {
       if (sortBy === "rating") return b.rating - a.rating;
       return (b.featured ? 1 : 0) - (a.featured ? 1 : 0);
     });
-  }, [selectedCategory, selectedTag, themeFilter, searchQuery, sortBy]);
+  }, [products, selectedCategory, selectedTag, themeFilter, searchQuery, sortBy]);
 
   const handleResetFilters = () => {
     setSearchQuery("");

@@ -1,35 +1,69 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { useState } from "react";
+import { usePathname, useRouter } from "next/navigation";
+import { useState, useEffect } from "react";
 import { ThemeSwitcher } from "@/components/theme/theme-switcher";
 import { SearchModal } from "@/components/search/search-modal";
 import { useCartStore } from "@/stores/cart-store";
 import { useWishlistStore } from "@/stores/wishlist-store";
-import { ShoppingBag, Search, Menu, X, Heart } from "lucide-react";
+import { useAuthStore } from "@/stores/auth-store";
+import { useToastStore } from "@/stores/toast-store";
+import {
+  ShoppingBag,
+  Search,
+  Menu,
+  X,
+  Heart,
+  User,
+  ShieldCheck,
+  LogOut,
+  ChevronDown,
+} from "lucide-react";
 
 export function Navbar() {
   const pathname = usePathname();
+  const router = useRouter();
+
   const { toggleDrawer, getTotalItems } = useCartStore();
   const { getWishlistCount } = useWishlistStore();
+  const { user, isAuthenticated, logout, checkSession } = useAuthStore();
+  const { addToast } = useToastStore();
+
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [searchModalOpen, setSearchModalOpen] = useState(false);
+  const [userDropdownOpen, setUserDropdownOpen] = useState(false);
+
+  useEffect(() => {
+    checkSession();
+  }, [checkSession]);
 
   const totalItems = getTotalItems();
   const totalWishlist = getWishlistCount();
+
+  const handleLogout = async () => {
+    await logout();
+    setUserDropdownOpen(false);
+    addToast({
+      title: "Berhasil Keluar",
+      message: "Sesi akun Anda telah diakhiri dengan aman.",
+      type: "info",
+    });
+    router.push("/login");
+  };
 
   const navLinks = [
     { href: "/", label: "Beranda" },
     { href: "/catalog", label: "Katalog" },
     { href: "/catalog?category=sticker", label: "Stiker Anime" },
     { href: "/catalog?category=template", label: "Templates" },
+    { href: "/support", label: "Pusat Bantuan" },
   ];
 
   return (
     <>
       <header className="sticky top-0 z-40 w-full px-3 py-3 sm:px-6 md:px-10">
-        <div className="mx-auto flex max-w-[1220px] flex-wrap items-center justify-between gap-4">
+        <div className="mx-auto flex max-w-[1220px] items-center justify-between gap-4">
           {/* Brand Logo from acuan.html */}
           <Link href="/" className="group flex items-center gap-2.5 focus:outline-none">
             <div className="flex h-8 w-8 items-center justify-center rounded-xl border border-white/15 bg-white/10 transition-colors duration-300 group-hover:bg-[#a1f68b] group-hover:text-slate-950">
@@ -86,7 +120,7 @@ export function Navbar() {
             {/* Wishlist Link with Badge */}
             <Link
               href="/wishlist"
-              className="relative flex h-10 w-10 items-center justify-center rounded-full border border-white/[0.07] bg-[#181b28] text-slate-300 transition-all hover:scale-105 hover:border-white/20 hover:text-white active:scale-95"
+              className="relative hidden sm:flex h-10 w-10 items-center justify-center rounded-full border border-white/[0.07] bg-[#181b28] text-slate-300 transition-all hover:scale-105 hover:border-white/20 hover:text-white active:scale-95"
               title="Daftar Keinginan (Wishlist)"
             >
               <Heart size={16} className={totalWishlist > 0 ? "text-[#ff6e6e] fill-[#ff6e6e]" : ""} />
@@ -100,7 +134,7 @@ export function Navbar() {
             {/* Cart Icon Trigger with Neon Dot */}
             <button
               onClick={toggleDrawer}
-              className="relative flex h-10 w-10 items-center justify-center rounded-full border border-white/[0.07] bg-[#181b28] text-slate-300 transition-all hover:scale-105 hover:border-white/20 hover:text-white active:scale-95"
+              className="relative hidden sm:flex h-10 w-10 items-center justify-center rounded-full border border-white/[0.07] bg-[#181b28] text-slate-300 transition-all hover:scale-105 hover:border-white/20 hover:text-white active:scale-95"
               title="Keranjang Belanja"
             >
               <ShoppingBag size={16} />
@@ -111,6 +145,67 @@ export function Navbar() {
 
             {/* Theme Switcher Button */}
             <ThemeSwitcher />
+
+            {/* Auth User Menu / Login Pill */}
+            {isAuthenticated && user ? (
+              <div className="relative">
+                <button
+                  onClick={() => setUserDropdownOpen(!userDropdownOpen)}
+                  className="flex items-center gap-1.5 rounded-full border border-white/10 bg-[#181b28] py-1.5 px-3 text-xs font-bold text-white hover:border-white/25 transition-all"
+                >
+                  <div className="flex h-6 w-6 items-center justify-center rounded-full bg-gradient-to-tr from-[#9df68c] to-[#76e4ca] text-slate-950 font-black text-[10px]">
+                    {user.name.charAt(0).toUpperCase()}
+                  </div>
+                  <span className="hidden md:inline max-w-[80px] truncate">{user.name}</span>
+                  <ChevronDown size={12} className="text-slate-400" />
+                </button>
+
+                {userDropdownOpen && (
+                  <div className="absolute right-0 mt-2 w-48 rounded-2xl border border-white/10 bg-[#151722]/95 p-2 shadow-2xl backdrop-blur-xl z-50 text-xs space-y-1">
+                    <div className="px-3 py-2 border-b border-white/10">
+                      <div className="font-bold text-white truncate">{user.name}</div>
+                      <div className="text-[10px] text-slate-400 truncate">{user.email}</div>
+                    </div>
+
+                    {user.role === "ADMIN" && (
+                      <Link
+                        href="/admin"
+                        onClick={() => setUserDropdownOpen(false)}
+                        className="flex items-center gap-2 rounded-xl px-3 py-2 font-semibold text-[#c084fc] hover:bg-white/5"
+                      >
+                        <ShieldCheck size={14} />
+                        <span>Admin Hub</span>
+                      </Link>
+                    )}
+
+                    <Link
+                      href="/dashboard"
+                      onClick={() => setUserDropdownOpen(false)}
+                      className="flex items-center gap-2 rounded-xl px-3 py-2 font-semibold text-slate-300 hover:bg-white/5 hover:text-white"
+                    >
+                      <User size={14} />
+                      <span>Dashboard Akun</span>
+                    </Link>
+
+                    <button
+                      onClick={handleLogout}
+                      className="flex w-full items-center gap-2 rounded-xl px-3 py-2 font-semibold text-rose-400 hover:bg-rose-500/10 transition-colors"
+                    >
+                      <LogOut size={14} />
+                      <span>Keluar (Logout)</span>
+                    </button>
+                  </div>
+                )}
+              </div>
+            ) : (
+              <Link
+                href="/login"
+                className="flex items-center gap-1.5 rounded-full bg-white text-slate-950 px-4 py-2 text-xs font-bold shadow-md hover:bg-[#a1f68b] transition-all active:scale-95"
+              >
+                <User size={13} />
+                <span>Masuk</span>
+              </Link>
+            )}
 
             {/* Mobile Menu Toggle */}
             <button
